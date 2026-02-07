@@ -1,0 +1,43 @@
+services:
+  frontend:
+    container_name: waygame
+    build:
+      context: ./frontend
+    restart: always
+
+    networks:
+      - dev
+
+  backend:
+    container_name: express
+    build: ./backend
+    restart: always
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - API_SERVER=${API_SERVER}
+      - WAYPAMEURL_ADS=${WAYPAMEURL_ADS}
+      - NEWS=${NEWS}
+      - SUPPORT=${SUPPORT}
+
+    networks:
+      - dev
+
+  nginx:
+    image: nginx:stable-alpine # используем стабильный легковесный Nginx образ
+    container_name: nginx # имя контейнера на хосте, удобно для docker logs/exec
+    ports:
+      - "80:80" # проброс порта HTTP наружу
+      - "443:443" # проброс порта HTTPS наружу
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - "./gzip.conf:/etc/nginx/gzip.conf:ro" # монтируем gzip файл внутрь контейнера
+    restart: always # автоматически перезапускать контейнер при падении
+    depends_on:
+      - frontend # запускать nginx после frontend 
+      # - backend
+    networks:
+      - dev # подключаем контейнер к сети dev
+networks:
+  dev:
