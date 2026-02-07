@@ -4,9 +4,6 @@ import { Command } from "./command.class.js";
 
 export class AddCommands extends Command {
   handle(bot: Telegraf<IContextBot>): void {
-    bot.telegram.setMyCommands([
-      { command: "start", description: "старт" },
-      { command: "help", description: "старт" },
-    ]);
+    bot.telegram.setMyCommands([{ command: "start", description: "старт" }]);
   }
 }

@@ -18,7 +18,7 @@ export class StartCommand extends Command {
       bot.start(async (ctx) => {
         ctx.reply(
           dedent(`
-        AdvertisingApp — тестовая версия рекламной платформы для Telegram Mini Apps.
+        САДАКА-САГ1А — тестовая версия рекламной платформы для Telegram Mini Apps.
 
         На данном этапе проводится техническая проверка системы:
         — интеграции рекламных блоков
