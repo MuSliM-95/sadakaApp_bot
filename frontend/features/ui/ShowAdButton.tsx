@@ -16,7 +16,7 @@ export function ShowAdButton(): ReactElement {
    * Вставьте ваш blockId
    */
   const showAd = useAdsgram({
-    blockId: '22552',
+    blockId: process.env.NEXT_PUBLIC_BLOCK_ID!,
     onReward,
     onError,
   });
