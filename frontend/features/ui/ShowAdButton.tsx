@@ -22,7 +22,10 @@ export function ShowAdButton(): ReactElement {
   });
 
   return (
-    <button className="h-[50px] w-[50px] cursor-pointer" onClick={showAd}>
+    <button
+      className="flex flex-col items-center cursor-pointer"
+      onClick={showAd}
+    >
       {" "}
       <svg
         fill="currentColor"
@@ -31,6 +34,9 @@ export function ShowAdButton(): ReactElement {
       >
         <path d="M7 6v12l10-6z" />
       </svg>
+      <p className="text-sm font-medium text-gray-400 dark:text-gray-500 italic">
+        Начать просмотр
+      </p>
     </button>
   );
 }

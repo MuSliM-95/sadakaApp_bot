@@ -55,16 +55,10 @@ export class OnMessageCommand extends Command {
             Markup.inlineKeyboard([
               [
                 Markup.button.webApp(
-                  "Открыть в Telegram",
+                  "Посмотреть рекламу",
                   `${this.dotenvConfig.get("WAYPAMEURL_ADS")}`
                 ),
-              ],
-              [
-                Markup.button.url(
-                  "Открыть в браузере",
-                  `${this.dotenvConfig.get("WAYPAMEURL_ADS")}`
-                ),
-              ],
+              ]
             ])
           );
         }

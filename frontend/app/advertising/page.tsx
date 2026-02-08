@@ -13,27 +13,12 @@ export default function AdvertisingPage() {
         </div>
 
         {/* Область для Видео/Iframe */}
-        <div className="aspect-video w-full flex items-center justify-center">
+        <div className="aspect-video w-full  flex items-center justify-center">
           {/* Сюда вставляется скрипт или iframe твоей рекламной сети */}
-          <div className="text-center space-y-3">
-            <div className="h-[40px] mx-auto mb-2 opacity-20 dark:opacity-40">
+            <div className="h-full flex items-center justify-center w-full mx-auto mb-2 opacity-20 dark:opacity-40">
               <ShowAdButton />
-
             </div>
-            <p className="text-sm font-medium text-gray-400 dark:text-gray-500 italic">
-              Здесь будет загружено видео...
-            </p>
-          </div>
-
-          {/* Пример интеграции внешнего плеера (раскомментировать при вставке кода) */}
-          {/* 
-          <iframe 
-            src="URL_РЕКЛАМНОГО_ВИДЕО" 
-            className="absolute inset-0 w-full h-full"
-            allow="autoplay; encrypted-media" 
-            allowFullScreen
-          /> 
-          */}
+    
         </div>
 
         {/* Нижняя панель (опционально, для кликабельности) */}
@@ -45,7 +30,7 @@ export default function AdvertisingPage() {
               </span>
             </div>
             <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-              WayGames Special Offer
+              САДАКА-САГ1А Special Offer
             </span>
           </div>
         </div>
