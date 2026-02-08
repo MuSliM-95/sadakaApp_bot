@@ -12,6 +12,8 @@ import type { IDotenvConfig } from "./configs/dotenv.interface.js";
 import { botBindings } from "./bot/commands/main.js";
 import type { IAdsController } from "./ads/ads.controller.interface.js";
 import { AdsController } from "./ads/ads.controller.js";
+import { ExceptionFilter } from "./errors/exception.filter.js";
+import type { IExceptionFilter } from "./errors/exception.filter.interface.js";
 
 
 const appBindings = new ContainerModule(
@@ -20,6 +22,7 @@ const appBindings = new ContainerModule(
     options.bind<App>(TYPES.Application).to(App);
     options.bind<IDotenvConfig>(TYPES.DotenvConfig).to(DotenvConfig).inSingletonScope();
     options.bind<IAdsController>(TYPES.AdsController).to(AdsController);
+    options.bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
   }
 );
 

@@ -6,4 +6,5 @@ export const TYPES = {
   AddCommands: Symbol.for("BotCommands"),
   AdsController: Symbol.for("AdsController"),
   OnMessageCommand: Symbol.for("OnMessageCommand"),
+  ExceptionFilter: Symbol.for("ExceptionFilter"),
 };

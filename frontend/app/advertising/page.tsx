@@ -1,3 +1,4 @@
+import { ShowAdButton } from "@/features/ui/ShowAdButton";
 
 export default function AdvertisingPage() {
   return (
@@ -15,14 +16,10 @@ export default function AdvertisingPage() {
         <div className="aspect-video w-full flex items-center justify-center">
           {/* Сюда вставляется скрипт или iframe твоей рекламной сети */}
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 mx-auto mb-2 opacity-20 dark:opacity-40">
-              <svg
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                className="text-gray-900 dark:text-white"
-              >
-                <path d="M7 6v12l10-6z" />
-              </svg>
+            <div className="h-[40px] mx-auto mb-2 opacity-20 dark:opacity-40">
+              <ShowAdButton />
+
+  
             </div>
             <p className="text-sm font-medium text-gray-400 dark:text-gray-500 italic">
               Здесь будет загружено видео...

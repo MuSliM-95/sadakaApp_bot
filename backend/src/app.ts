@@ -10,6 +10,7 @@ import type { ILoggerService } from "./logger/logger.service.interface.js";
 import express, { type Express } from "express";
 import type { AdsController } from "./ads/ads.controller.js";
 import { createRequire } from "node:module";
+import type { IExceptionFilter } from "./errors/exception.filter.interface.js";
 
 const require = createRequire(import.meta.url);
 const helmet = require("helmet");
@@ -24,6 +25,7 @@ export class App {
   constructor(
     @inject(TYPES.DotenvConfig) private readonly dotenvConfig: IDotenvConfig,
     @inject(TYPES.LoggerService) private readonly loggerService: ILoggerService,
+    @inject(TYPES.ExceptionFilter) private exceptionFilter: IExceptionFilter,
     @inject(TYPES.AdsController) private readonly adsController: AdsController,
     @multiInject(TYPES.BotCommands) private readonly botCommands: Command[]
   ) {
@@ -38,6 +40,10 @@ export class App {
     this._app.use(helmet());
   }
 
+  public useExceptionFilter(): void {
+		this._app.use(this.exceptionFilter.catch.bind(this.exceptionFilter));
+	}
+
   public useRoutes() {
     this._app.use("/api", this.adsController.router);
   }
@@ -45,6 +51,7 @@ export class App {
   public async init() {
     this.useMiddlewares();
     this.useRoutes();
+    this.useExceptionFilter()
     const host = this.dotenvConfig.get("API_SERVER") || `localhost`;
     this._server = this._app.listen(this._port, host);
     this.loggerService.log(`Сервер запушен на http://${host}:${this._port}`);
