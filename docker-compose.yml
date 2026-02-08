@@ -4,7 +4,8 @@ services:
     build:
       context: ./frontend
     restart: always
-
+    environment:
+      - NEXT_PUBLIC_BLOCK_ID=${NEXT_PUBLIC_BLOCK_ID}
     networks:
       - dev
 
