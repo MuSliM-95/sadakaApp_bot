@@ -19,7 +19,6 @@ export default function AdvertisingPage() {
             <div className="h-[40px] mx-auto mb-2 opacity-20 dark:opacity-40">
               <ShowAdButton />
 
-  
             </div>
             <p className="text-sm font-medium text-gray-400 dark:text-gray-500 italic">
               Здесь будет загружено видео...
