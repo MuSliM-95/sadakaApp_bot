@@ -19,8 +19,9 @@ export class PaymentOn extends Command {
         await ctx.answerPreCheckoutQuery(true);
         return;
       });
+
       bot.on("successful_payment", async (ctx) => {
-        await ctx.editMessageText(
+        await ctx.reply(
           "ДжазакаЛлаху Хайран!",
           Markup.inlineKeyboard([[menu]])
         );
