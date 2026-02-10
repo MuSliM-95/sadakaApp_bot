@@ -5,7 +5,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../types.js";
 import type { ILoggerService } from "../../logger/logger.service.interface.js";
 import type { IDotenvConfig } from "../../configs/dotenv.interface.js";
-import {  menu } from "./helpers/bot/buttons.js";
+
 
 @injectable()
 export class OnMessageCommand extends Command {
@@ -28,7 +28,6 @@ export class OnMessageCommand extends Command {
           ctx.message.reply_to_message.text.includes("Введите сумму")
         ) {
           const { message_id } = ctx.message;
-          console.log(message_id);
 
           await ctx.deleteMessages([message_id, message_id - 1]);
           const amount = Number(text);
@@ -45,15 +44,9 @@ export class OnMessageCommand extends Command {
             ])
           );
         }
-
-        if ("successful_payment" in ctx.message) {
-          await ctx.editMessageText(
-            "Спасибо за вашу поддержку! ⭐",
-            Markup.inlineKeyboard([[menu]])
-          );
-          return;
-        }
       });
+
+
     } catch (error) {
       this.loggerService.error(`[OnMessageCommand] ${error}`);
     }
