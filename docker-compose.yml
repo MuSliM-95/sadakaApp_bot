@@ -19,6 +19,9 @@ services:
       - WAYPAMEURL_ADS=${WAYPAMEURL_ADS}
       - NEWS=${NEWS}
       - SUPPORT=${SUPPORT}
+      - TRC20_ADDRESS_HERE=${TRC20_ADDRESS_HERE}
+      - BEP20_ADDRESS_HERE=${BEP20_ADDRESS_HERE}
+      - TON_ADDRESS_HERE=${TON_ADDRESS_HERE}
 
     networks:
       - dev
