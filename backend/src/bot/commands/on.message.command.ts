@@ -4,8 +4,8 @@ import { Command } from "./command.class.js";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../types.js";
 import type { ILoggerService } from "../../logger/logger.service.interface.js";
-import { dedent } from "ts-dedent";
 import type { IDotenvConfig } from "../../configs/dotenv.interface.js";
+import {  menu } from "./helpers/bot/buttons.js";
 
 @injectable()
 export class OnMessageCommand extends Command {
@@ -22,45 +22,36 @@ export class OnMessageCommand extends Command {
 
         const { text } = ctx.update.message;
 
-        if (text === "⚙ Прочее") {
+        if (
+          "reply_to_message" in ctx.message &&
+          "text" in ctx.message.reply_to_message &&
+          ctx.message.reply_to_message.text.includes("Введите сумму")
+        ) {
+          const { message_id } = ctx.message;
+          console.log(message_id);
+
+          await ctx.deleteMessages([message_id, message_id - 1]);
+          const amount = Number(text);
+          if (isNaN(amount) || amount <= 0) {
+            await ctx.reply(
+              "Введите только цифры, и не ниже 0! Попробуй еще раз."
+            );
+            return;
+          }
           await ctx.reply(
-            dedent(`
-				⚙️ Прочее\n\n📣 Подпишитесь на канал, чтобы получать актуальные новости и оставаться на связи.. 
-			  `),
+            `Пожертвовать ${amount} ⭐`,
             Markup.inlineKeyboard([
-              [
-                Markup.button.url(
-                  "📣 Новости",
-                  `${this.dotenvConfig.get("NEWS")}`
-                ),
-              ],
-              [
-                Markup.button.url(
-                  "👨‍✈️ Поддержка",
-                  `${this.dotenvConfig.get("SUPPORT")}`
-                ),
-              ],
+              Markup.button.callback(`⭐ ${amount}`, `pay-${amount}`),
             ])
           );
         }
 
-        if (text === "👀 Смотреть рекламу") {
-          await ctx.reply(
-            dedent(
-              `📺 Реклама
-	
-	Вы можете просмотреть рекламу в браузере Telegram либо в браузере вашего устройства.\n
-	Смотря рекламу, вы помогаете нам развивать наши продукты, а также мы жертвуем часть средств нуждающимся.`
-            ),
-            Markup.inlineKeyboard([
-              [
-                Markup.button.webApp(
-                  "Посмотреть рекламу",
-                  `${this.dotenvConfig.get("WAYPAMEURL_ADS")}`
-                ),
-              ]
-            ])
+        if ("successful_payment" in ctx.message) {
+          await ctx.editMessageText(
+            "Спасибо за вашу поддержку! ⭐",
+            Markup.inlineKeyboard([[menu]])
           );
+          return;
         }
       });
     } catch (error) {

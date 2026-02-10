@@ -44,7 +44,7 @@ export default function HomePage() {
           <Link href="about">САДАКА-САГ1А</Link>
         </h1>
         <div className="flex justify-center gap-3 mb-2 items-center">
-          <ShowAdButton className="sticky flex">Реклама</ShowAdButton>
+          <ShowAdButton className="sticky">Реклама</ShowAdButton>
         </div>
 
         <div className="space-y-4">

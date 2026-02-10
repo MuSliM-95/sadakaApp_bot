@@ -39,12 +39,17 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
       <TooltipTrigger asChild>
         <button
           className={cn(
-            "flex absolute top-4 gap-2 right-10 items-center cursor-pointer",
+            "flex absolute top-4 gap-2 right-10 tems-baseline items-center cursor-pointer",
             className
           )}
           onClick={showAd}
         >
-          <Youtube /> {children}
+          <Youtube />{" "}
+          <span className="translate-y-[-2px]">
+            {" "}
+            {/* Микро-корректировка */}
+            {children}
+          </span>
         </button>
       </TooltipTrigger>
       <TooltipContent>
