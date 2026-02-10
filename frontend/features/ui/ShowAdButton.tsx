@@ -1,10 +1,23 @@
 "use client";
-import { useCallback, ReactElement } from "react";
+import { useCallback, ReactElement, ReactNode } from "react";
+import { Youtube } from "lucide-react";
 
 import { useAdsgram } from "./useAdsgram";
 import { ShowPromiseResult } from "@/adsgram";
+import { cn } from "@/lib/utils";
 
-export function ShowAdButton(): ReactElement {
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
+
+interface IProps {
+  className?: string;
+  children?: ReactNode;
+}
+
+export function ShowAdButton({ className, children }: IProps): ReactElement {
   const onReward = useCallback(() => {
     alert("Reward");
   }, []);
@@ -22,21 +35,21 @@ export function ShowAdButton(): ReactElement {
   });
 
   return (
-    <button
-      className="flex flex-col items-center cursor-pointer"
-      onClick={showAd}
-    >
-      {" "}
-      <svg
-        fill="currentColor"
-        viewBox="0 0 24 24"
-        className="text-gray-900 dark:text-white"
-      >
-        <path d="M7 6v12l10-6z" />
-      </svg>
-      <p className="text-sm font-medium text-gray-400 dark:text-gray-500 italic">
-        Начать просмотр
-      </p>
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          className={cn(
+            "flex absolute top-4 gap-2 right-10 items-center cursor-pointer",
+            className
+          )}
+          onClick={showAd}
+        >
+          <Youtube /> {children}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Реклама</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
