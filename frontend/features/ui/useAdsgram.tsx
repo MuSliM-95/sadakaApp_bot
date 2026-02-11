@@ -1,9 +1,9 @@
-'use client'
-import { AdController, ShowPromiseResult } from '@/adsgram';
-import { useCallback, useEffect, useRef } from 'react';
+"use client";
+import { AdController, ShowPromiseResult } from "@/adsgram";
+import { useCallback, useEffect, useRef } from "react";
 /**
  * Проверьте раздел Typescript
-  * и используйте свой путь к типам adsgram
+ * и используйте свой путь к типам adsgram
  */
 
 export interface useAdsgramParams {
@@ -12,13 +12,22 @@ export interface useAdsgramParams {
   onError?: (result: ShowPromiseResult) => void;
 }
 
-export function useAdsgram({ blockId, onReward, onError }: useAdsgramParams): () => Promise<void> {
+export function useAdsgram({
+  blockId,
+  onReward,
+  onError,
+}: useAdsgramParams): () => Promise<void> {
   const AdControllerRef = useRef<AdController | undefined>(undefined);
 
   useEffect(() => {
-   if(!blockId || !window.Adsgram) return 
-	
-    AdControllerRef.current = window.Adsgram?.init({ blockId: blockId.trim(), debug: true, debugBannerType: 'FullscreenMedia' });
+    if (!blockId || !window.Adsgram) return;
+    console.log(blockId);
+
+    AdControllerRef.current = window.Adsgram?.init({
+      blockId: blockId.trim(),
+      debug: true,
+      debugBannerType: "FullscreenMedia",
+    });
   }, [blockId]);
 
   return useCallback(async () => {
@@ -37,8 +46,8 @@ export function useAdsgram({ blockId, onReward, onError }: useAdsgramParams): ()
       onError?.({
         error: true,
         done: false,
-        state: 'load',
-        description: 'Adsgram script not loaded',
+        state: "load",
+        description: "Adsgram script not loaded",
       });
     }
   }, [onError, onReward]);
