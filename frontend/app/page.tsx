@@ -1,6 +1,7 @@
 "use client";
 
 import { ShowAdButton } from "@/features/ui/ShowAdButton";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 const tools = [
@@ -16,12 +17,12 @@ const tools = [
     description: "Ваш мини таймер",
     icon: "⏱",
   },
-  {
-    href: "/qibla",
-    title: "Кибла",
-    description: "Направление к КИБЛЕ",
-    icon: "🕋",
-  },
+  // {
+  //   href: "/qibla",
+  //   title: "Кибла",
+  //   description: "Направление к КИБЛЕ",
+  //   icon: "🕋",
+  // },
   {
     href: "/tasktracker",
     title: "Трекер задач",
@@ -43,8 +44,14 @@ export default function HomePage() {
         <h1 className="text-center text-lg tracking-[0.3em] text-neutral-400 mb-3">
           <Link href="about">САДАКА-САГ1А</Link>
         </h1>
-        <div className="flex justify-center gap-3 mb-2 items-center">
-          <ShowAdButton className="sticky">Реклама</ShowAdButton>
+        <div
+          className={cn(
+            "flex justify-center rounded-3xl shadow-lg active:scale-[0.98] transition bg-white gap-3 mb-2 items-center"
+          )}
+        >
+          <ShowAdButton className="sticky w-full p-3 h-full justify-center text-black">
+            Посмотреть рекламу
+          </ShowAdButton>
         </div>
 
         <div className="space-y-4">
