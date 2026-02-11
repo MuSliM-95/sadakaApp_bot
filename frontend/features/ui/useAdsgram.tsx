@@ -17,9 +17,11 @@ export function useAdsgram({ blockId, onReward, onError }: useAdsgramParams): ()
 
   useEffect(() => {
 	console.log(blockId);
+  console.log('VALUE:', JSON.stringify(blockId));
 	console.log(typeof blockId);
+   if(!blockId || !window.Adsgram) return 
 	
-    AdControllerRef.current = window.Adsgram?.init({ blockId, debug: true, debugBannerType: 'FullscreenMedia' }).show();
+    AdControllerRef.current = window.Adsgram?.init({ blockId, debug: true, debugBannerType: 'FullscreenMedia' });
   }, [blockId]);
 
   return useCallback(async () => {
