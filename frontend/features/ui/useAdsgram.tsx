@@ -19,7 +19,7 @@ export function useAdsgram({ blockId, onReward, onError }: useAdsgramParams): ()
 	console.log(blockId);
 	console.log(typeof blockId);
 	
-    AdControllerRef.current = window.Adsgram?.init({ blockId, debug: true, debugBannerType: 'FullscreenMedia' });
+    AdControllerRef.current = window.Adsgram?.init({ blockId, debug: true, debugBannerType: 'FullscreenMedia' }).show();
   }, [blockId]);
 
   return useCallback(async () => {
