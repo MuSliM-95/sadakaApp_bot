@@ -16,12 +16,9 @@ export function useAdsgram({ blockId, onReward, onError }: useAdsgramParams): ()
   const AdControllerRef = useRef<AdController | undefined>(undefined);
 
   useEffect(() => {
-	console.log(blockId);
-  console.log('VALUE:', JSON.stringify(blockId));
-	console.log(typeof blockId);
    if(!blockId || !window.Adsgram) return 
 	
-    AdControllerRef.current = window.Adsgram?.init({ blockId, debug: true, debugBannerType: 'FullscreenMedia' });
+    AdControllerRef.current = window.Adsgram?.init({ blockId: blockId.trim(), debug: true, debugBannerType: 'FullscreenMedia' });
   }, [blockId]);
 
   return useCallback(async () => {
