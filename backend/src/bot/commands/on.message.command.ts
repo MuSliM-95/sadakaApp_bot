@@ -5,7 +5,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../types.js";
 import type { ILoggerService } from "../../logger/logger.service.interface.js";
 import type { IDotenvConfig } from "../../configs/dotenv.interface.js";
-
+import { menu } from "./helpers/bot/buttons.js";
 
 @injectable()
 export class OnMessageCommand extends Command {
@@ -44,10 +44,21 @@ export class OnMessageCommand extends Command {
             ])
           );
         }
-        console.log(ctx);
-      });
+        
 
-    
+        if ("successful_payment" in ctx.message) {
+          const payment = ctx.message.successful_payment;
+
+          console.log("Payment received:", payment);
+          await ctx.reply(
+            "ДжазакаЛлаху Хайран!",
+            Markup.inlineKeyboard([[menu]])
+          );
+          return;
+        }
+
+        // console.log(ctx);
+      });
     } catch (error) {
       this.loggerService.error(`[OnMessageCommand] ${error}`);
     }

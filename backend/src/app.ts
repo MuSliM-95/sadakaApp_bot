@@ -60,6 +60,10 @@ export class App {
     }
 
     await this._bot.launch();
+    this._bot.use((ctx, next) => {
+      console.log(ctx);
+      return next();
+    });
     this.loggerService.log("[App] Приложение запущенно.");
   }
 }
