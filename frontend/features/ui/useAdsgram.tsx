@@ -43,12 +43,12 @@ export function useAdsgram({
           onError?.(result);
         });
     } else {
-      onError?.({
-        error: true,
-        done: false,
-        state: "load",
-        description: "Adsgram script not loaded",
-      });
+      // onError?.({
+      //   error: true,
+      //   done: false,
+      //   state: "load",
+      //   description: "Adsgram script not loaded",
+      // });
     }
   }, [onError, onReward]);
 }
