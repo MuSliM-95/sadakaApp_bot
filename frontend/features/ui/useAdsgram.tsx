@@ -36,11 +36,11 @@ export function useAdsgram({
         .show()
         .then(() => {
           // Пользователь просмотрел рекламу до конца или пропустил в Interstitial формате
-          onReward?.();
+          // onReward?.();
         })
         .catch((result: ShowPromiseResult) => {
           // Ошибка при воспроизведении рекламы
-          onError?.(result);
+          // onError?.(result);
         });
     } else {
       // onError?.({
