@@ -21,11 +21,11 @@ export function useAdsgram({
 
   useEffect(() => {
     if (!blockId || !window.Adsgram) return;
-    console.log(blockId);
+    // console.log(blockId);
 
     AdControllerRef.current = window.Adsgram?.init({
-      blockId: blockId.trim(),
-      debug: false,
+      blockId: blockId,
+      // debug: false,
       // debugBannerType: "FullscreenMedia",
     });
   }, [blockId]);
