@@ -42,7 +42,6 @@ export function useAdsgram({
         .show()
         .then((e) => {
           // Пользователь просмотрел рекламу до конца или пропустил в Interstitial формате
-          alert("yes");
           getApi();
           onReward?.();
         })
