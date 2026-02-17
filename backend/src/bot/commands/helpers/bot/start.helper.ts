@@ -5,7 +5,7 @@ import { Markup } from "telegraf";
 export const startCommandRes = (dotenvConfig: IDotenvConfig) => {
   return {
     message: dedent(`
-	САДАКА-САГ1А — тестовая версия рекламной платформы для Telegram Mini Apps.
+  INZARE — это небольшой стартовый MVP в формате Telegram-бота.
   
 	На данном этапе проводится техническая проверка системы:
 	— интеграции рекламных блоков
@@ -17,7 +17,7 @@ export const startCommandRes = (dotenvConfig: IDotenvConfig) => {
     markup: Markup.inlineKeyboard([
       [
         Markup.button.webApp(
-          "САДАКА-САГ1А",
+          "INZARE",
           `${dotenvConfig.get("WAYPAMEURL_ADS")}`
         ),
       ],

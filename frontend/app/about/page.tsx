@@ -12,19 +12,15 @@ export default function About() {
         </h1>
 
         <p className="text-base sm:text-lg leading-relaxed text-white/90 mb-3 break-words">
-          <span className="font-semibold">САДАКА-САГ1А</span> — это
-          социально-благотворительный проект, направленный на поддержку
-          мусульманской уммы.
+          <span className="font-semibold">Inzare</span> — это небольшой стартовый MVP в формате <strong>Telegram-бота</strong>, где пользователи могут играть в головоломку.
         </p>
 
         <p className="text-base sm:text-lg leading-relaxed text-white/90 mb-3 break-words">
-          В рамках проекта реализуются различные программы и сервисы, призванные
-          облегчить соблюдение религии.
+          Платформа проста в использовании и ориентирована на быстрый запуск и тестирование идеи.
         </p>
 
         <p className="text-base sm:text-lg leading-relaxed text-white/90 break-words">
-          Часть получаемого дохода направляется на благотворительность и помощь
-          нуждающимся.
+          В будущем планируется расширение функционала с новыми играми и возможностями для пользователей.
         </p>
       </div>
     </section>
