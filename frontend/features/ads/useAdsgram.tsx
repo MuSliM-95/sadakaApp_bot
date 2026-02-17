@@ -1,6 +1,9 @@
 "use client";
+
 import { AdController, ShowPromiseResult } from "@/adsgram";
 import { useCallback, useEffect, useRef } from "react";
+import { useAdsMutation } from "./hooks/useAdsMutation";
+
 /**
  * Проверьте раздел Typescript
  * и используйте свой путь к типам adsgram
@@ -9,46 +12,46 @@ import { useCallback, useEffect, useRef } from "react";
 export interface useAdsgramParams {
   blockId: string;
   onReward?: () => void;
-  onError?: (result: ShowPromiseResult) => void;
+  onError?: () => void;
+  secondsLeft?: number;
 }
 
 export function useAdsgram({
   blockId,
+  secondsLeft = 0,
   onReward,
   onError,
 }: useAdsgramParams): () => Promise<void> {
   const AdControllerRef = useRef<AdController | undefined>(undefined);
 
+  const { getApi } = useAdsMutation();
+
   useEffect(() => {
-    if (!blockId || !window.Adsgram) return;
-    // console.log(blockId);
+    if (!blockId || !window.Adsgram || secondsLeft > 0) return;
 
     AdControllerRef.current = window.Adsgram?.init({
       blockId: blockId,
-      // debug: false,
-      // debugBannerType: "FullscreenMedia",
+      debug: true,
+      debugBannerType: "FullscreenMedia",
     });
-  }, [blockId]);
+  }, [blockId, secondsLeft]);
 
   return useCallback(async () => {
     if (AdControllerRef.current) {
       AdControllerRef.current
         .show()
-        .then(() => {
+        .then((e) => {
           // Пользователь просмотрел рекламу до конца или пропустил в Interstitial формате
-          // onReward?.();
+
+          getApi();
+          onReward?.();
         })
         .catch((result: ShowPromiseResult) => {
           // Ошибка при воспроизведении рекламы
-          // onError?.(result);
+          onError?.();
         });
     } else {
-      // onError?.({
-      //   error: true,
-      //   done: false,
-      //   state: "load",
-      //   description: "Adsgram script not loaded",
-      // });
+      onError?.();
     }
   }, [onError, onReward]);
 }

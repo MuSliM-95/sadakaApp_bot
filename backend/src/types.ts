@@ -4,7 +4,8 @@ export const TYPES = {
   DotenvConfig: Symbol.for("DotenvConfig"),
   BotCommands: Symbol.for("BotCommands"),
   AddCommands: Symbol.for("BotCommands"),
-  AdsController: Symbol.for("AdsController"),
   OnMessageCommand: Symbol.for("OnMessageCommand"),
   ExceptionFilter: Symbol.for("ExceptionFilter"),
+  AdsController: Symbol.for("AdsController"),
+  AdsService: Symbol.for("AdsService"),
 };

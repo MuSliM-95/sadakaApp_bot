@@ -49,7 +49,6 @@ export class OnMessageCommand extends Command {
         if ("successful_payment" in ctx.message) {
           const payment = ctx.message.successful_payment;
 
-          console.log("Payment received:", payment);
           await ctx.reply(
             "ДжазакаЛлаху Хайран!",
             Markup.inlineKeyboard([[menu]])

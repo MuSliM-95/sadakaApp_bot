@@ -4,11 +4,13 @@ import { TYPES } from "../types.js";
 import type { ILoggerService } from "../logger/logger.service.interface.js";
 import type { NextFunction, Request, Response } from "express";
 import type { IAdsController } from "./ads.controller.interface.js";
+import type { AdsService } from "./ads.service.js";
 
 @injectable()
 export class AdsController extends BaseController implements IAdsController {
   constructor(
-    @inject(TYPES.LoggerService) private readonly loggerService: ILoggerService
+    @inject(TYPES.LoggerService) private readonly loggerService: ILoggerService,
+    @inject(TYPES.AdsService) private readonly adsService: AdsService
   ) {
     super(loggerService);
     this.bindRoutes([
@@ -22,6 +24,7 @@ export class AdsController extends BaseController implements IAdsController {
   }
 
   public async getRewards(req: Request, res: Response, next: NextFunction) {
+    this.adsService.updateState();
     res.status(200).json({ message: "Ok" });
   }
 }

@@ -5,7 +5,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../types.js";
 import type { ILoggerService } from "../../logger/logger.service.interface.js";
 import { menu } from "./helpers/bot/buttons.js";
-import { message } from "telegraf/filters";
+
 
 @injectable()
 export class PaymentOn extends Command {
@@ -19,15 +19,6 @@ export class PaymentOn extends Command {
       bot.on("pre_checkout_query", async (ctx) => {
         await ctx.answerPreCheckoutQuery(true);
         return;
-      });
-
-      bot.on(message("successful_payment"), async (ctx) => {
-        console.log("SUCCESSFUL PAYMENT:", ctx.message.successful_payment);
-      
-        await ctx.reply(
-          "ДжазакаЛлаху Хайран!",
-          Markup.inlineKeyboard([[menu]])
-        );
       });
 
       bot.on("successful_payment", async (ctx) => {

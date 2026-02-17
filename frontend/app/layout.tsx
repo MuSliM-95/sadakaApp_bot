@@ -1,7 +1,14 @@
+"use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
+import { Provider } from "react-redux";
+import { persistor, store } from "@/store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +25,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const [client] = useState(
+		new QueryClient({
+			defaultOptions: {
+				queries: {
+					refetchOnWindowFocus: false
+				}
+			}
+		})
+	)
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -30,7 +47,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-         <TooltipProvider>{children}</TooltipProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <QueryClientProvider client={client}>
+              <TooltipProvider>{children}</TooltipProvider>
+            </QueryClientProvider>
+          </PersistGate>
+        </Provider>
       </body>
     </html>
   );

@@ -1,71 +1,55 @@
 "use client";
 
-import { ShowAdButton } from "@/features/ui/ShowAdButton";
+import { ShowAdButton } from "@/features/ads/ShowAdButton";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 const tools = [
   {
-    href: "/tasbih",
-    title: "Чётки",
-    description: "Электронные чётки для зикра",
-    icon: "📿",
-  },
-  {
-    href: "/timer",
-    title: "Таймер",
-    description: "Ваш мини таймер",
-    icon: "⏱",
-  },
-  // {
-  //   href: "/qibla",
-  //   title: "Кибла",
-  //   description: "Направление к КИБЛЕ",
-  //   icon: "🕋",
-  // },
-  {
-    href: "/tasktracker",
-    title: "Трекер задач",
-    description: "Всё ближе к целям",
-    icon: "🚩",
-  },
-  {
-    href: "/azkar",
-    title: "Азкары",
-    description: "Читайте азкары",
-    icon: "📖",
+    href: "/game",
+    title: "MOSAIC.PRO",
+    description: "Отдохни немного",
+    icon: "🧠",
   },
 ];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
-      <div className="w-[360px] p-6">
-        <h1 className="text-center text-lg tracking-[0.3em] text-neutral-400 mb-3">
-          <Link href="about">САДАКА-САГ1А</Link>
+    <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center px-4">
+      <div className="w-full max-w-md p-6 flex flex-col justify-between h-[500px]">
+        {/* Заголовок */}
+        <h1 className="text-center text-lg tracking-[0.3em] text-neutral-400 mb-4 hover:text-white transition-colors">
+          <Link href="/about">САДАКА-САГ1А</Link>
         </h1>
+
+        {/* Кнопка рекламы */}
         <div
           className={cn(
-            "flex justify-center rounded-3xl shadow-lg active:scale-[0.98] transition bg-white gap-3 mb-2 items-center"
+            "flex justify-center rounded-3xl shadow-lg transition-transform active:scale-[0.98] bg-gradient-to-r from-purple-600 to-indigo-600 p-1 mb-6"
           )}
         >
-          <ShowAdButton className="sticky w-full p-3 h-full justify-center text-black">
-            Посмотреть рекламу
+          <ShowAdButton className="w-full p-4 h-full justify-center text-white font-bold text-sm rounded-3xl">
+            {/* Посмотреть рекламу */}
           </ShowAdButton>
         </div>
 
+        {/* Инструменты */}
         <div className="space-y-4">
           {tools.map((tool) => (
             <Link
               key={tool.href}
               href={tool.href}
-              className="block rounded-3xl bg-neutral-900 border border-white/5 p-5 shadow-lg active:scale-[0.98] transition"
+              className="group block rounded-3xl bg-neutral-900 border border-white/5 p-5 shadow-lg transition-transform duration-200 hover:scale-[1.03] hover:bg-gradient-to-r hover:from-purple-700 hover:to-indigo-700"
             >
               <div className="flex items-center gap-4">
-                <div className="text-3xl">{tool.icon}</div>
+                <div className="text-3xl transition-transform group-hover:rotate-12">
+                  {tool.icon}
+                </div>
                 <div>
-                  <div className="text-lg font-medium">{tool.title}</div>
-                  <div className="text-sm text-neutral-400">
+                  <div className="text-lg font-semibold transition-colors group-hover:text-white">
+                    {tool.title}
+                  </div>
+                  <div className="text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors">
                     {tool.description}
                   </div>
                 </div>
@@ -74,6 +58,7 @@ export default function HomePage() {
           ))}
         </div>
 
+        {/* Подпись */}
         <p className="mt-10 text-center text-xs text-neutral-500">
           Простые инструменты для сосредоточения
         </p>

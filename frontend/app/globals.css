@@ -3,6 +3,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: 'Press-Start-2P';
+  src: url('/fonts/PressStart2P-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SpaceMono';
+  src: url('/fonts/SpaceMono-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Silkscreen';
+  src: url('/fonts/Silkscreen-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'SilkscreenBold';
+  src: url('/fonts/Silkscreen-Bold.ttf') format('truetype');
+  font-weight: bold;
+}
+
+
 
 
 @theme inline {

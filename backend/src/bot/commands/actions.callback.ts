@@ -8,12 +8,14 @@ import type { IDotenvConfig } from "../../configs/dotenv.interface.js";
 import { dedent } from "ts-dedent";
 import { startCommandRes } from "./helpers/bot/start.helper.js";
 import { back } from "./helpers/bot/buttons.js";
+import type { AdsService } from "../../ads/ads.service.js";
 
 @injectable()
 export class ActionCallback extends Command {
   constructor(
     @inject(TYPES.LoggerService) private readonly loggerService: ILoggerService,
-    @inject(TYPES.DotenvConfig) private readonly dotenvConfig: IDotenvConfig
+    @inject(TYPES.DotenvConfig) private readonly dotenvConfig: IDotenvConfig,
+    @inject(TYPES.AdsService) private readonly adsService: AdsService
   ) {
     super();
   }
@@ -21,9 +23,15 @@ export class ActionCallback extends Command {
     try {
       bot.action("other", async (ctx) => {
         await ctx.answerCbQuery();
+        const data = await this.adsService.getStats();
+        console.log(data);
+
         await ctx.editMessageText(
-          dedent(`
-				⚙️ Прочее\n\n📣 Подпишитесь на канал, чтобы получать актуальные новости и оставаться на связи.. 
+          dedent(`⚙️ Прочее\n
+        👥 Всего ${data.usersCount} пользователей
+        👀 Всего просмотрено ${data.advertising} реклам
+
+        📣 Подпишитесь на канал, чтобы получать актуальные новости и оставаться на связи.. 
 			  `),
           Markup.inlineKeyboard([
             [
