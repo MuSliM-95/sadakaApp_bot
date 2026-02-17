@@ -36,6 +36,7 @@ export default function MosaicGame() {
   const onReward = useCallback(() => {
     const date = Date.now() + 60 * 1000;
     dispatch(startCooldown(date));
+    setIsTimerRunning(true)
   }, [dispatch]);
 
   const onError = useCallback(() => {}, []);
@@ -49,6 +50,7 @@ export default function MosaicGame() {
 
   const triggerAd = useCallback(() => {
     if (secondsLeft > 0) return;
+    setIsTimerRunning(false)
     showAd?.();
   }, [showAd, secondsLeft]);
 
