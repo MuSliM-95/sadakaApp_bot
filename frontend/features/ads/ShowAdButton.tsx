@@ -13,7 +13,6 @@ import {
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { startCooldown, tick } from "@/store/ad.slice";
 import { useAdsgram } from "./useAdsgram";
-import { useAdsMutation } from "./hooks/useAdsMutation";
 
 interface IProps {
   className?: string;
@@ -24,22 +23,21 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
   const cooldown = useAppSelector((state) => state.ad.cooldown);
   const secondsLeft = useAppSelector((state) => state.ad.secondsLeft);
   const dispatch = useAppDispatch();
-  const { getApi } = useAdsMutation();
 
   const onReward = useCallback(() => {
     // setAds(false);
     const date = Date.now() + 60 * 1000;
     dispatch(startCooldown(date));
-    getApi();
   }, [dispatch]);
 
-  // const onError = useCallback(() => {
-  //   // setAds(false);
-  // }, []);
+  const onError = useCallback(() => {
+    // setAds(false);
+  }, []);
   const showAd = useAdsgram({
     blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
     secondsLeft,
     onReward,
+    onError
   });
 
   /**
