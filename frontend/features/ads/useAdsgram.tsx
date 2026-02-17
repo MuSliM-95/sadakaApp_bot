@@ -31,8 +31,8 @@ export function useAdsgram({
 
     AdControllerRef.current = window.Adsgram?.init({
       blockId: blockId,
-      // debug: true,
-      // debugBannerType: "FullscreenMedia",
+      debug: true,
+      debugBannerType: "FullscreenMedia",
     });
   }, [blockId, secondsLeft]);
 
