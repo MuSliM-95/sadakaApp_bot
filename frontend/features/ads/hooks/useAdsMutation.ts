@@ -6,7 +6,9 @@ export function useAdsMutation() {
   const { mutate: getApi } = useMutation({
     mutationKey: ["get-ads"],
     mutationFn: () => adsService.getApi(),
-    onSuccess() {},
+    onSuccess() {
+    
+    },
     onError() {},
   });
 
