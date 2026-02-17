@@ -31,8 +31,8 @@ export function useAdsgram({
 
     AdControllerRef.current = window.Adsgram?.init({
       blockId: blockId,
-      // debug: true,
-      // debugBannerType: "FullscreenMedia",
+      debug: true,
+      debugBannerType: "FullscreenMedia",
     });
   }, [blockId, secondsLeft]);
 
@@ -42,7 +42,7 @@ export function useAdsgram({
         .show()
         .then((e) => {
           // Пользователь просмотрел рекламу до конца или пропустил в Interstitial формате
-
+          alert("yes");
           getApi();
           onReward?.();
         })
