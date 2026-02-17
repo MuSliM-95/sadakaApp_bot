@@ -19,7 +19,7 @@ export default function HomePage() {
       <div className="w-full max-w-md p-6 flex flex-col justify-between h-[500px]">
         {/* Заголовок */}
         <h1 className="text-center text-lg tracking-[0.3em] text-neutral-400 mb-4 hover:text-white transition-colors">
-          <Link href="/about">САДАКА-САГ1А</Link>
+          <Link href="/about">INZARE</Link>
         </h1>
 
         {/* Кнопка рекламы */}
