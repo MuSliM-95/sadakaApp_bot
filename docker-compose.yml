@@ -6,6 +6,7 @@ services:
     restart: always
     environment:
       - NEXT_PUBLIC_BLOCK_ID=${NEXT_PUBLIC_BLOCK_ID}
+      - NEXT_PUBLIC_BLOCK_ID_INIT=${NEXT_PUBLIC_BLOCK_ID_INIT}
     networks:
       - dev
 
