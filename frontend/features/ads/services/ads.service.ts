@@ -3,9 +3,7 @@ import { api } from "@/shared/api/instance.api"
 
 class AdsService {
 	public async getApi() {
-		const response = await api.get('api/reward')
-        console.log(response);
-		
+		const response = await api.get('api/reward')		
 		return response
 	}
 }

@@ -36,8 +36,10 @@ export default function MosaicGame() {
   const onReward = useCallback(() => {
     const date = Date.now() + 60 * 1000;
     dispatch(startCooldown(date));
-    setIsTimerRunning(true)
-  }, [dispatch]);
+    if (!isSolved) {
+      setIsTimerRunning(true); 
+    }
+  }, [dispatch, isSolved]);
 
   const onError = useCallback(() => {}, []);
 
