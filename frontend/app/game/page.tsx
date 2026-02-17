@@ -1,5 +1,6 @@
 "use client";
 
+import { useAdsMutation } from "@/features/ads/hooks/useAdsMutation";
 import { useAdsgram } from "@/features/ads/useAdsgram";
 import { BackButton } from "@/features/ui/BackButton";
 import { startCooldown, tick } from "@/store/ad.slice";
@@ -19,6 +20,7 @@ const STORAGE_KEY = "mosaic-pro-save";
 export default function MosaicGame() {
   const cooldown = useAppSelector((state) => state.ad.cooldown);
   const secondsLeft = useAppSelector((state) => state.ad.secondsLeft);
+  const { getApi } = useAdsMutation();
 
   const dispatch = useAppDispatch();
 
@@ -35,6 +37,7 @@ export default function MosaicGame() {
   const onReward = useCallback(() => {
     const date = Date.now() + 60 * 1000;
     dispatch(startCooldown(date));
+    getApi();
   }, [dispatch]);
 
   const onError = useCallback(() => {}, []);
