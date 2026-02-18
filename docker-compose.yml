@@ -15,6 +15,8 @@ services:
     container_name: express
     build: ./backend
     restart: always
+    volumes: 
+      - ./backend/stats.json:/app/stats.json
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - API_SERVER=${API_SERVER}
