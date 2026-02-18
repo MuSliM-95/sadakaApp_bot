@@ -19,7 +19,6 @@ const STORAGE_KEY = "mosaic-pro-save";
 export default function MosaicGame() {
   const cooldown = useAppSelector((state) => state.ad.cooldown);
   const secondsLeft = useAppSelector((state) => state.ad.secondsLeft);
-  
 
   const dispatch = useAppDispatch();
 
@@ -28,6 +27,7 @@ export default function MosaicGame() {
   const [moves, setMoves] = useState(0);
   const [isSolved, setIsSolved] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isAdActive, setIsAdActive] = useState(false);
 
   // 🔥 Таймер
   const [time, setTime] = useState(0);
@@ -36,12 +36,12 @@ export default function MosaicGame() {
   const onReward = useCallback(() => {
     const date = Date.now() + 60 * 1000;
     dispatch(startCooldown(date));
-    if (!isSolved) {
-      setIsTimerRunning(true); 
-    }
-  }, [dispatch, isSolved]);
+    setIsAdActive(false);
+  }, [dispatch]);
 
-  const onError = useCallback(() => {}, []);
+  const onError = useCallback(() => {
+    setIsAdActive(false)
+  }, []);
 
   const showAd = useAdsgram({
     blockId: process.env.NEXT_PUBLIC_BLOCK_ID!,
@@ -50,9 +50,18 @@ export default function MosaicGame() {
     onError,
   });
 
+  useEffect(() => {
+    if (!isSolved && isInitialized && !isAdActive) {
+      setIsTimerRunning(true);
+    }
+  }, [isSolved, isInitialized, isAdActive]);
+
   const triggerAd = useCallback(() => {
     if (secondsLeft > 0) return;
-    setIsTimerRunning(false)
+
+    setIsTimerRunning(false); // 🔥 обязательно
+    setIsAdActive(true);
+
     showAd?.();
   }, [showAd, secondsLeft]);
 
@@ -100,7 +109,6 @@ export default function MosaicGame() {
           setTime(data.time || 0);
           setLevelIdx(idx);
           setIsInitialized(true);
-          setIsTimerRunning(!data.isSolved);
           return;
         }
       }
@@ -139,7 +147,6 @@ export default function MosaicGame() {
     setIsSolved(false);
     setLevelIdx(idx);
     setIsInitialized(true);
-    setIsTimerRunning(true);
   }, []);
 
   useEffect(() => {
@@ -161,6 +168,9 @@ export default function MosaicGame() {
 
   const moveTile = (index: number) => {
     if (isSolved) return;
+    if (!isTimerRunning) {
+      setIsTimerRunning(true);
+    }
 
     const size = LEVELS[levelIdx].size;
     const emptyIndex = tiles.indexOf(0);
@@ -184,15 +194,16 @@ export default function MosaicGame() {
 
       if (won) {
         setIsTimerRunning(false);
+        setIsSolved(true);
         triggerAd();
-        setTimeout(() => {
-          setIsSolved(true);
-        }, 3000);
       }
     }
   };
 
   const resetProgress = () => {
+    if (secondsLeft <= 0) {
+      setIsTimerRunning(false); // сначала стоп
+    }
     localStorage.removeItem(STORAGE_KEY);
     triggerAd();
     initGame(levelIdx, true);
@@ -290,15 +301,22 @@ export default function MosaicGame() {
               и <span className="font-bold">{formatTime(time)}</span>
             </p>
 
-            {/* Кнопка повторного запуска */}
             <button
               onClick={() => initGame(levelIdx, true)}
-              className="relative w-full py-4 bg-black text-white rounded-2xl font-bold hover:bg-gray-800 active:scale-95 transition-all shadow-lg shadow-black/40"
+              className="relative w-full py-4 mb-2 bg-black text-white rounded-2xl font-bold hover:bg-gray-800 active:scale-95 transition-all shadow-lg shadow-black/40"
             >
               ЕЩЁ РАЗ
               {/* Glow эффект при hover */}
               <span className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/20 via-white/10 to-white/20 opacity-0 hover:opacity-40 transition-opacity pointer-events-none" />
             </button>
+            {levelIdx < LEVELS.length - 1 && (
+              <button
+                onClick={() => initGame(levelIdx + 1, true)}
+                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all hover:scale-[1.02]"
+              >
+                ДАЛЕЕ →
+              </button>
+            )}
 
             {/* Конфетти/звёздочки (мини-анимация) */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
