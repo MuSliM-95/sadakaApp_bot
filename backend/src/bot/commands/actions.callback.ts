@@ -24,8 +24,6 @@ export class ActionCallback extends Command {
       bot.action("other", async (ctx) => {
         await ctx.answerCbQuery();
         const data = await this.adsService.getStats();
-        console.log(data);
-
         await ctx.editMessageText(
           dedent(`⚙️ Прочее\n
         👥 Всего ${data.usersCount} пользователей
@@ -44,6 +42,10 @@ export class ActionCallback extends Command {
               Markup.button.url(
                 "👨‍✈️ Поддержка",
                 `${this.dotenvConfig.get("SUPPORT")}`
+              ),
+              Markup.button.url(
+                "✉ WhatsApp",
+                `${this.dotenvConfig.get("WHATSAPP")}`
               ),
             ],
             [Markup.button.callback("⭐ Поддержать проект", "donate")],

@@ -56,7 +56,6 @@ export class OnMessageCommand extends Command {
           return;
         }
 
-        // console.log(ctx);
       });
     } catch (error) {
       this.loggerService.error(`[OnMessageCommand] ${error}`);

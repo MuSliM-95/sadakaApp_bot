@@ -48,13 +48,9 @@ export class FetchClient {
 	) {
 		let url = `${this.baseUrl}/${endpoint}`
 
-		console.log(this.baseUrl);
-
 		if (options.params) {
 			url += this.createSearchParams(options.params)
 		}
-        
-		console.log(url);
 		
 		const config: RequestInit = {
 			...options,

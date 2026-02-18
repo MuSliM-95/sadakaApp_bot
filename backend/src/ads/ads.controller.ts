@@ -24,9 +24,7 @@ export class AdsController extends BaseController implements IAdsController {
   }
 
   public async getRewards(req: Request, res: Response, next: NextFunction) {
-    await this.adsService.updateState();
-    console.log('yes');
-    
+    await this.adsService.updateState();    
     res.status(200).json({ message: "Ok" });
   }
 }
