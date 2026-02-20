@@ -45,7 +45,6 @@ export default function MosaicGame() {
 
   const showAd = useAdsgram({
     blockId: process.env.NEXT_PUBLIC_BLOCK_ID!,
-    secondsLeft,
     onReward,
     onError,
   });
@@ -57,12 +56,12 @@ export default function MosaicGame() {
   }, [isSolved, isInitialized, isAdActive]);
 
   const triggerAd = useCallback(() => {
-    if (secondsLeft > 0) return;
+    if (!showAd || secondsLeft > 0) return;
 
     setIsTimerRunning(false); // 🔥 обязательно
     setIsAdActive(true);
 
-    showAd?.();
+    showAd();
   }, [showAd, secondsLeft]);
 
   useEffect(() => {

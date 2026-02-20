@@ -13,12 +13,10 @@ export interface useAdsgramParams {
   blockId: string;
   onReward?: () => void;
   onError?: () => void;
-  secondsLeft?: number;
 }
 
 export function useAdsgram({
   blockId,
-  secondsLeft = 0,
   onReward,
   onError,
 }: useAdsgramParams): () => Promise<void> {
@@ -27,14 +25,14 @@ export function useAdsgram({
   const { getApi } = useAdsMutation();
 
   useEffect(() => {
-    if (!blockId || !window.Adsgram || secondsLeft > 0) return;
+    if (!blockId || !window.Adsgram) return;
 
     AdControllerRef.current = window.Adsgram?.init({
       blockId: blockId,
       // debug: true,
       // debugBannerType: "FullscreenMedia",
     });
-  }, [blockId, secondsLeft]);
+  }, [blockId]);
 
   return useCallback(async () => {
     if (AdControllerRef.current) {

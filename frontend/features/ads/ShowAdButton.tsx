@@ -35,10 +35,15 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
   }, []);
   const showAd = useAdsgram({
     blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
-    secondsLeft,
     onReward,
-    onError
+    onError,
   });
+
+  const triggerAd = useCallback(() => {
+    if (!showAd || secondsLeft > 0) return;
+
+    showAd();
+  }, [showAd, secondsLeft]);
 
   /**
    * Вставьте ваш blockId
@@ -59,7 +64,7 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
       <TooltipTrigger asChild>
         <button
           disabled={secondsLeft > 0}
-          onClick={showAd}
+          onClick={triggerAd}
           className={cn(
             "relative w-14 h-14 rounded-full cursor-pointer flex items-center justify-center transition-all duration-300",
             "backdrop-blur-xl border",
