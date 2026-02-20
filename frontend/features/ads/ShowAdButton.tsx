@@ -26,7 +26,7 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
 
   const onReward = useCallback(() => {
     // setAds(false);
-    const date = Date.now() + 60 * 1000;
+    const date = Date.now() + 120 * 1000;
     dispatch(startCooldown(date));
   }, [dispatch]);
 

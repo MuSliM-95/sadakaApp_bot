@@ -47,6 +47,7 @@ export function useAdsgram({
         })
         .catch((result: ShowPromiseResult) => {
           // Ошибка при воспроизведении рекламы
+          console.log("AD ERROR:", result);
           onError?.();
         });
     } else {

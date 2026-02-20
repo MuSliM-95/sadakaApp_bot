@@ -11,6 +11,12 @@ const tools = [
     description: "Отдохни немного",
     icon: "🧠",
   },
+  // {
+  //   href: "/game2",
+  //   title: "MOSAIC.PRO",
+  //   description: "Отдохни немного",
+  //   icon: "🧠",
+  // },
 ];
 
 export default function HomePage() {
