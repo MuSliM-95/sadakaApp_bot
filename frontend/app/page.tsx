@@ -23,12 +23,16 @@ const tools = [
 export default function HomePage() {
   useEffect(() => {
     const webApp: any = window.Telegram?.WebApp;
-    if (webApp) {
-      webApp.ready();
-      webApp.expand?.(); // безопасно вызвать, если метод есть
+    if (!webApp) return;
+    webApp.ready();
+    webApp.expand(); // Разворачивает приложение на максимум (высокое окно)
+    
+    // В новых версиях API Telegram (платформа 7.0+)
+    if (webApp.requestFullscreen) {
+      webApp.requestFullscreen(); // Настоящий полноэкранный режим без статус-бара
     }
   }, []);
-  
+
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center px-4">
       <div className="w-full max-w-md p-6 flex flex-col justify-between h-[500px]">
