@@ -1,7 +1,7 @@
 "use client";
 
 import { AdController, ShowPromiseResult } from "@/adsgram";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useAdsMutation } from "./hooks/useAdsMutation";
 
 /**
@@ -24,30 +24,32 @@ export function useAdsgram({
 
   const { getApi } = useAdsMutation();
 
+  useEffect(() => {
+    if (!blockId || !window.Adsgram) return;
+
+    AdControllerRef.current = window.Adsgram?.init({
+      blockId: blockId,
+      // debug: true,
+      // debugBannerType: "FullscreenMedia",
+    });
+  }, [blockId]);
+
   return useCallback(async () => {
-    if (!blockId || !window.Adsgram) {
+    if (AdControllerRef.current) {
+      AdControllerRef.current
+        .show()
+        .then((e) => {
+          // Пользователь просмотрел рекламу до конца или пропустил в Interstitial формате
+          getApi();
+          onReward?.();
+        })
+        .catch((result: ShowPromiseResult) => {
+          // Ошибка при воспроизведении рекламы
+          // console.log("AD ERROR:", result);
+          onError?.();
+        });
+    } else {
       onError?.();
-      return;
     }
-    if (!AdControllerRef.current) {
-      AdControllerRef.current = window.Adsgram?.init({
-        blockId: blockId,
-        // debug: true,
-        // debugBannerType: "FullscreenMedia",
-      });
-    }
-    AdControllerRef.current
-      .show()
-      .then((e) => {
-        // Пользователь просмотрел рекламу до конца или пропустил в Interstitial формате
-        getApi();
-        onReward?.();
-      })
-      .catch((result: ShowPromiseResult) => {
-        // Ошибка при воспроизведении рекламы
-        AdControllerRef.current = undefined;
-        console.log("AD ERROR:", result);
-        onError?.();
-      });
-  }, [blockId, getApi, onError, onReward]);
+  }, [onError, getApi, onReward]);
 }

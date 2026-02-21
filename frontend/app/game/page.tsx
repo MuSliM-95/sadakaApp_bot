@@ -2,16 +2,33 @@
 
 import { useAdsgram } from "@/features/ads/useAdsgram";
 import { BackButton } from "@/features/ui/BackButton";
+import { cn } from "@/lib/utils";
 import { startCooldown, tick } from "@/store/ad.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect, useState, useCallback } from "react";
 
-type Difficulty = { size: number; label: string; color: string };
+type Difficulty = {
+  size: number;
+  label: string;
+  color: string;
+};
 
 const LEVELS: Difficulty[] = [
-  { size: 3, label: "Новичок", color: "from-green-400 to-emerald-600" },
-  { size: 4, label: "Мастер", color: "from-blue-500 to-indigo-600" },
-  { size: 5, label: "Легенда", color: "from-purple-500 to-rose-600" },
+  {
+    size: 3,
+    label: "Новичок",
+    color: "from-green-400 to-emerald-600",
+  },
+  {
+    size: 4,
+    label: "Мастер",
+    color: "from-blue-500 to-indigo-600",
+  },
+  {
+    size: 5,
+    label: "Легенда",
+    color: "from-purple-500 to-rose-600",
+  },
 ];
 
 const STORAGE_KEY = "mosaic-pro-save";
@@ -40,7 +57,7 @@ export default function MosaicGame() {
   }, [dispatch]);
 
   const onError = useCallback(() => {
-    setIsAdActive(false)
+    setIsAdActive(false);
   }, []);
 
   const showAd = useAdsgram({
@@ -97,6 +114,7 @@ export default function MosaicGame() {
   const initGame = useCallback((idx: number, forceNew = false) => {
     const size = LEVELS[idx].size;
 
+    // Попытка восстановить сохранение
     if (!forceNew) {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -113,12 +131,14 @@ export default function MosaicGame() {
       }
     }
 
+    // Создаём "правильный" порядок
     let newTiles = [...Array(size * size).keys()].map(
       (i) => (i + 1) % (size * size)
     );
-
     let emptyIndex = newTiles.indexOf(0);
-    const shuffleMoves = 200;
+
+    // Количество случайных ходов зависит от размера
+    const shuffleMoves = size * size * 10;
 
     for (let i = 0; i < shuffleMoves; i++) {
       const row = Math.floor(emptyIndex / size);
@@ -138,6 +158,19 @@ export default function MosaicGame() {
       ];
 
       emptyIndex = nextIndex;
+    }
+
+    // Проверяем, не получился ли случайно уже решённый пазл
+    const isSolvedPuzzle = (tiles: number[]) => {
+      for (let i = 0; i < tiles.length - 1; i++) {
+        if (tiles[i] !== i + 1) return false;
+      }
+      return tiles[tiles.length - 1] === 0;
+    };
+
+    if (isSolvedPuzzle(newTiles)) {
+      // Если случайно решено — перемешиваем заново
+      return initGame(idx, true);
     }
 
     setTiles(newTiles);
@@ -293,6 +326,10 @@ export default function MosaicGame() {
             <h2 className="text-4xl md:text-5xl font-extrabold mb-2 italic tracking-tight text-white drop-shadow-lg">
               ВЕЛИКОЛЕПНО!
             </h2>
+
+            <h3 className={`text-2xl bg-gradient-to-r ${LEVELS[levelIdx].color} bg-clip-text text-transparent`}>
+              {LEVELS[levelIdx].label}
+            </h3>
 
             {/* Подзаголовок с ходами и временем */}
             <p className="text-white/90 mb-8 font-medium text-sm md:text-base">

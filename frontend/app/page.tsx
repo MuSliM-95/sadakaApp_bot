@@ -3,6 +3,7 @@
 import { ShowAdButton } from "@/features/ads/ShowAdButton";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const tools = [
   {
@@ -20,6 +21,14 @@ const tools = [
 ];
 
 export default function HomePage() {
+  useEffect(() => {
+    const webApp: any = window.Telegram?.WebApp;
+    if (webApp) {
+      webApp.ready();
+      webApp.expand?.(); // безопасно вызвать, если метод есть
+    }
+  }, []);
+  
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex items-center justify-center px-4">
       <div className="w-full max-w-md p-6 flex flex-col justify-between h-[500px]">
