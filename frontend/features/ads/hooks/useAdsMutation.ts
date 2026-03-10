@@ -1,16 +1,29 @@
-
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adsService } from "../services/ads.service";
+import { AdvertisingType } from "@/shared/types/global.types";
+import { IGenerateToken } from "../types/ads.types";
+
+export interface IPAdsHookParams {
+  type: AdvertisingType;
+  data: IGenerateToken;
+}
 
 export function useAdsMutation() {
-  const { mutate: getApi } = useMutation({
-    mutationKey: ["get-ads"],
-    mutationFn: () => adsService.getApi(),
-    onSuccess() {
-    
+  const queryClient = useQueryClient();
+  const { mutate: addReward } = useMutation({
+    mutationKey: ["add-ads-reward"],
+    mutationFn: (params: IPAdsHookParams) =>
+      adsService.addAds(params),
+    onSuccess(data) {
+      queryClient.invalidateQueries({ queryKey: ["get-ads-ticket"] });
+      if (data.ticket === "created") {
+        queryClient.invalidateQueries({ queryKey: ["get-tickets"] });
+      }
     },
-    onError() {},
+    onError(error) {
+      console.error("Ads mutation error:", error);
+    },
   });
 
-  return { getApi };
+  return { addReward };
 }

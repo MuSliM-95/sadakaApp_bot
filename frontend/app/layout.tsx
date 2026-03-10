@@ -8,7 +8,8 @@ import { Provider } from "react-redux";
 import { persistor, store } from "@/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +26,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   const [client] = useState(
     new QueryClient({
       defaultOptions: {
@@ -43,14 +43,19 @@ export default function RootLayout({
           src="https://sad.adsgram.ai/js/sad.min.js"
           strategy="beforeInteractive"
         />
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster />
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <QueryClientProvider client={client}>
-              <TooltipProvider>{children}</TooltipProvider>
+              <TooltipProvider> {children}</TooltipProvider>
             </QueryClientProvider>
           </PersistGate>
         </Provider>

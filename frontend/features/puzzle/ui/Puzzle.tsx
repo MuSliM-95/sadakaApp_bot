@@ -2,8 +2,11 @@
 
 import { useAdsgram } from "@/features/ads/useAdsgram";
 import { BackButton } from "@/features/ui/BackButton";
-import { cn } from "@/lib/utils";
-import { startCooldown, tick } from "@/store/ad.slice";
+import {
+  gameAdaTimerTick,
+  startCooldown,
+} from "@/store/ad.slice";
+import { saveGame } from "@/store/game.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect, useState, useCallback } from "react";
 
@@ -33,8 +36,8 @@ const LEVELS: Difficulty[] = [
 
 const STORAGE_KEY = "mosaic-pro-save";
 
-export default function MosaicGame() {
-  const cooldown = useAppSelector((state) => state.ad.cooldown);
+export function MosaicGame() {
+  const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
   const secondsLeft = useAppSelector((state) => state.ad.secondsLeft);
 
   const dispatch = useAppDispatch();
@@ -51,8 +54,8 @@ export default function MosaicGame() {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
   const onReward = useCallback(() => {
-    const date = Date.now() + 120 * 1000;
-    dispatch(startCooldown(date));
+    const date = Date.now() + 60 * 1000;
+    dispatch(startCooldown({ timer: date, type: "game" }));
     setIsAdActive(false);
   }, [dispatch]);
 
@@ -60,8 +63,8 @@ export default function MosaicGame() {
     setIsAdActive(false);
   }, []);
 
-  const showAd = useAdsgram({
-    blockId: process.env.NEXT_PUBLIC_BLOCK_ID!,
+  const { showAd } = useAdsgram({
+    blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
     onReward,
     onError,
   });
@@ -82,14 +85,14 @@ export default function MosaicGame() {
   }, [showAd, secondsLeft]);
 
   useEffect(() => {
-    if (!cooldown) return;
+    if (!cooldownGame) return;
 
     const interval = setInterval(() => {
-      dispatch(tick());
+      dispatch(gameAdaTimerTick());
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [cooldown, dispatch]);
+  }, [cooldownGame, dispatch]);
 
   // ⏱ Таймер эффект
   useEffect(() => {
@@ -109,6 +112,10 @@ export default function MosaicGame() {
       .toString()
       .padStart(2, "0")}`;
   };
+
+  useEffect(() => {
+    dispatch(saveGame({id: 0, name: "MOSAIC.PRO", href: "games/puzzle", url: null }));
+  }, []);
 
   // Инициализация игры
   const initGame = useCallback((idx: number, forceNew = false) => {
@@ -233,11 +240,7 @@ export default function MosaicGame() {
   };
 
   const resetProgress = () => {
-    if (secondsLeft <= 0) {
-      setIsTimerRunning(false); // сначала стоп
-    }
     localStorage.removeItem(STORAGE_KEY);
-    triggerAd();
     initGame(levelIdx, true);
   };
 
@@ -327,7 +330,9 @@ export default function MosaicGame() {
               ВЕЛИКОЛЕПНО!
             </h2>
 
-            <h3 className={`text-2xl bg-gradient-to-r ${LEVELS[levelIdx].color} bg-clip-text text-transparent`}>
+            <h3
+              className={`text-2xl bg-gradient-to-r ${LEVELS[levelIdx].color} bg-clip-text text-transparent`}
+            >
               {LEVELS[levelIdx].label}
             </h3>
 

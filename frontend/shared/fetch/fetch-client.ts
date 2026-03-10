@@ -1,152 +1,149 @@
-import { FetchError } from './fetch-error'
-import { RequestOptions, TypeSearchParams } from './types/fetch.types'
+import { FetchError } from "./fetch-error";
+import { RequestOptions, TypeSearchParams } from "./types/fetch.types";
 
 export class FetchClient {
-	private baseUrl: string
-	public headers?: Record<string, string>
-	public params?: TypeSearchParams
-	public options?: RequestOptions
+  private baseUrl: string;
+  public headers?: Record<string, string>;
+  public params?: TypeSearchParams;
+  public options?: RequestOptions;
 
-	public constructor(init: {
-		baseUrl: string
-		headers?: Record<string, string>
-		params?: TypeSearchParams
-		options?: RequestOptions
-	}) {
-		this.baseUrl = init.baseUrl
-		this.headers = init.headers
-		this.params = init.params
-		this.options = init.options
-	}
+  public constructor(init: {
+    baseUrl: string;
+    headers?: Record<string, string>;
+    params?: TypeSearchParams;
+    options?: RequestOptions;
+  }) {
+    this.baseUrl = init.baseUrl;
+    this.headers = init.headers;
+    this.params = init.params;
+    this.options = init.options;
+  }
 
-	private createSearchParams(params: TypeSearchParams) {
-		const searchParams = new URLSearchParams()
+  private createSearchParams(params: TypeSearchParams) {
+    const searchParams = new URLSearchParams();
 
-		for (const key in { ...this.params, ...params }) {
-			if (Object.prototype.hasOwnProperty.call(params, key)) {
-				const value = params[key]
+    for (const key in { ...this.params, ...params }) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        const value = params[key];
 
-				if (Array.isArray(value)) {
-					value.forEach(currentValue => {
-						if (currentValue) {
-							searchParams.append(key, currentValue.toString())
-						}
-					})
-				} else if (value) {
-					searchParams.set(key, value.toString())
-				}
-			}
-		}
+        if (Array.isArray(value)) {
+          value.forEach((currentValue) => {
+            if (currentValue) {
+              searchParams.append(key, currentValue.toString());
+            }
+          });
+        } else if (value) {
+          searchParams.set(key, value.toString());
+        }
+      }
+    }
 
-		return `?${searchParams.toString()}`
-	}
+    return `?${searchParams.toString()}`;
+  }
 
-	private async request<T>(
-		endpoint: string,
-		method: RequestInit['method'],
-		options: RequestOptions = {}
-	) {
-		let url = `${this.baseUrl}/${endpoint}`
+  private async request<T>(
+    endpoint: string,
+    method: RequestInit["method"],
+    options: RequestOptions = {}
+  ) {
+    let url = `${this.baseUrl}/${endpoint}`;
+    // const initData = window.Telegram?.WebApp.initData;
 
-		if (options.params) {
-			url += this.createSearchParams(options.params)
-		}
-		
-		const config: RequestInit = {
-			...options,
-			...(!!this.options && { ...this.options }),
-			method,
-			headers: {
-				...(!!options?.headers && options.headers),
-				...this.headers
-			}
-		}
+    // if (!initData) {
+    //   throw new Error("Telegram initData not available");
+    // }
 
-		const response: Response = await fetch(url, config)
+    if (options.params) {
+      url += this.createSearchParams(options.params);
+    }
 
-		if (!response.ok) {
-			const error = (await response.json()) as { err: string } | undefined
-			throw new FetchError(
-				response.status,
-				error?.err || response.statusText
-			)
-		}
+    const config: RequestInit = {
+      ...options,
+      ...(!!this.options && { ...this.options }),
+      method,
+      headers: {
+        ...(!!options?.headers && options.headers),
+        ...this.headers,
+        // "X-Telegram-Init-Data": initData,
+      },
+    };
 
-		if (
-			response.headers.get('Content-Type')?.includes('application/json')
-		) {
-			return (await response.json()) as unknown as T
-		} else {
-			return (await response.text()) as unknown as T
-		}
-	}
+    const response: Response = await fetch(url, config);
 
-	public get<T>(
-		endpoint: string,
-		options: Omit<RequestOptions, 'body'> = {}
-	) {
-		return this.request<T>(endpoint, 'GET', options)
-	}
+    if (!response.ok) {
+      const error = (await response.json()) as { err: string } | undefined;
+      throw new FetchError(response.status, error?.err || response.statusText);
+    }
 
-	public post<T>(
-		endpoint: string,
-		body?: Record<string, any>,
-		options: RequestOptions = {}
-	) {
-		
-		return this.request<T>(endpoint, 'POST', {
-			...options,
-			headers: {
-				'Content-Type': 'application/json',
-				...(options?.headers || {})
-			},
+    if (response.headers.get("Content-Type")?.includes("application/json")) {
+      return (await response.json()) as unknown as T;
+    } else {
+      return (await response.text()) as unknown as T;
+    }
+  }
 
-			...(!!body && { body: JSON.stringify(body) })
-		})
-	}
+  public get<T>(endpoint: string, options: Omit<RequestOptions, "body"> = {}) {
+    return this.request<T>(endpoint, "GET", options);
+  }
 
-	public put<T>(
-		endpoint: string,
-		body?: Record<string, any>,
-		options: RequestOptions = {}
-	) {
-		return this.request<T>(endpoint, 'PUT', {
-			...options,
-			headers: {
-				'Content-Type': 'application/json',
-				...(options?.headers || {})
-			},
-			...(!!body && { body: JSON.stringify(body) })
-		})
-	}
+  public post<T>(
+    endpoint: string,
+    body?: Record<string, any>,
+    options: RequestOptions = {}
+  ) {
+    return this.request<T>(endpoint, "POST", {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options?.headers || {}),
+      },
 
-	public delete<T>(
-		endpoint: string,
-		body?: Record<string, any>,
-		options: Omit<RequestOptions, 'body'> = {}
-	) {
-		return this.request<T>(endpoint, 'DELETE', {
-			...options,
-			headers: {
-				'Content-Type': 'application/json',
-				...(options?.headers || {})
-			},
-			...(!!body && { body: JSON.stringify(body) })
-		})
-	}
+      ...(!!body && { body: JSON.stringify(body) }),
+    });
+  }
 
-	public patch<T>(
-		endpoint: string,
-		body?: Record<string, any>,
-		options: RequestOptions = {}
-	) {
-		return this.request<T>(endpoint, 'PATCH', {
-			...options,
-			headers: {
-				'Content-Type': 'application/json',
-				...(options?.headers || {})
-			},
-			...(!!body && { body: JSON.stringify(body) })
-		})
-	}
+  public put<T>(
+    endpoint: string,
+    body?: Record<string, any>,
+    options: RequestOptions = {}
+  ) {
+    return this.request<T>(endpoint, "PUT", {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options?.headers || {}),
+      },
+      ...(!!body && { body: JSON.stringify(body) }),
+    });
+  }
+
+  public delete<T>(
+    endpoint: string,
+    body?: Record<string, any>,
+    options: Omit<RequestOptions, "body"> = {}
+  ) {
+    return this.request<T>(endpoint, "DELETE", {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options?.headers || {}),
+      },
+      ...(!!body && { body: JSON.stringify(body) }),
+    });
+  }
+
+  public patch<T>(
+    endpoint: string,
+    body?: Record<string, any>,
+    options: RequestOptions = {}
+  ) {
+    return this.request<T>(endpoint, "PATCH", {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(options?.headers || {}),
+      },
+      ...(!!body && { body: JSON.stringify(body) }),
+    });
+  }
 }

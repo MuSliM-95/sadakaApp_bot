@@ -13,7 +13,7 @@ export const BackButton: React.FC<Props> = ({ className }) => {
       className={cn("absolute top-2 left-2", className)}
       variant={"ghost"}
     >
-      <Link href={"/"}>Назад</Link>
+      <Link href={`/`}>Назад</Link>
     </Button>
   );
 };

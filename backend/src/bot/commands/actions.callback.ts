@@ -54,12 +54,19 @@ export class ActionCallback extends Command {
         );
       });
 
-      bot.action("menu", async (ctx) => {
+      bot.action("menu", async (ctx: IContextBot) => {
+        await ctx.answerCbQuery();
+
+        if (!("callback_query" in ctx.update)) return;
+
+        const { id } = ctx.update.callback_query.message?.chat!;
+
         const { message, markup } = startCommandRes(this.dotenvConfig);
         await ctx.editMessageText(message, markup);
       });
 
       bot.action("affiliate_projects", async (ctx) => {
+        await ctx.answerCbQuery();
         await ctx.editMessageText(
           "Скоро здесь появятся проекты наших друзей и партнеров, по воле Аллаха.",
           Markup.inlineKeyboard([[back]])

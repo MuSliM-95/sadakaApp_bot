@@ -1,51 +1,85 @@
 import { AdController, ShowPromiseResult } from "@/adsgram";
-import { useCallback, useEffect, useRef } from "react";
-import { useAdsMutation } from "./hooks/useAdsMutation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTicketsQuery } from "../tickets/hooks/useTicketsQuery";
+import { useAdsTicketQuery } from "./hooks/useAdsTicketQuery";
+import { useAppDispatch } from "@/store/hooks";
+import { adsTicketsUpdate } from "@/store/ad.slice";
+
 export interface useAdsgramParams {
   blockId: string;
   onReward?: () => void;
   onError?: () => void;
 }
 
-
 export function useAdsgram({
   blockId,
   onReward,
   onError,
-}: useAdsgramParams): () => Promise<void> {
+}: useAdsgramParams) {
   const AdControllerRef = useRef<AdController | undefined>(undefined);
-  const { getApi } = useAdsMutation();
+  const dispatch = useAppDispatch();
+  const { data: tickets } = useTicketsQuery();
+  const { data: ads } = useAdsTicketQuery();
 
-  // Функция для (пере)инициализации
-  const initAd = useCallback(() => {
-    if (window.Adsgram && blockId) {
-      AdControllerRef.current = window.Adsgram.init({ blockId });
-    }
-  }, [blockId]);
+  const [isPreparing, setIsPreparing] = useState(false);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    initAd();
-  }, [initAd]);
+    if (ads != null && tickets != null) {
+      dispatch(adsTicketsUpdate({ ads: ads, tickets: tickets }));
+    }
+  }, [ads, tickets]);
 
-  return useCallback(async () => {
+  useEffect(() => {
+    AdControllerRef.current = window.Adsgram?.init({
+      blockId,
+      debug: true,
+      debugBannerType: "FullscreenMedia",
+    });
+  }, [blockId]);
+
+  const startCountdown = () => {
+    setIsPreparing(true);
+    setCountdown(5);
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          showInternal();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const showInternal = () => {
     if (!AdControllerRef.current) {
-      initAd(); // Пробуем инициализировать, если реф пуст
+      setIsPreparing(false);
+      onError?.();
+      return;
     }
 
-    if (AdControllerRef.current) {
-      try {
-        const result: ShowPromiseResult = await AdControllerRef.current.show();
-        // Успех
-        getApi();
+    AdControllerRef.current
+      .show()
+      .then(() => {
+        setIsPreparing(false);
         onReward?.();
-      } catch (result: any) {
-        // Если сессия истекла, Adsgram часто возвращает специфическую ошибку.
-        // Переинициализируем контроллер для следующей попытки
-        initAd();
+      })
+      .catch((result: ShowPromiseResult) => {
+        setIsPreparing(false);
         onError?.();
-      }
-    } else {
-      onError?.();
-    }
-  }, [initAd, getApi, onReward, onError]);
+      });
+  };
+
+  const showAd = useCallback(async () => {
+    startCountdown();
+  }, []);
+
+  return {
+    showAd,
+    isPreparing,
+    countdown,
+  };
 }

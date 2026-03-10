@@ -5,15 +5,18 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from "redux-persist/lib/storage";
 import adReducer from "./ad.slice";
 import { getPersistConfig } from 'redux-deep-persist'
+import gameReducer from "./game.slice";
 
 const rootReducer = combineReducers({
   ad: adReducer,
+  game: gameReducer
 });
 
 const persistConfig = getPersistConfig({
   key: "root",
   storage,
   rootReducer,
+  blacklist: ["ad.ads", "ad.tickets", "ad.user"]
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

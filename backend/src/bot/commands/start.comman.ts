@@ -7,6 +7,12 @@ import type { ILoggerService } from "../../logger/logger.service.interface.js";
 import type { IDotenvConfig } from "../../configs/dotenv.interface.js";
 import { startCommandRes } from "./helpers/bot/start.helper.js";
 import type { AdsService } from "../../ads/ads.service.js";
+import type { IUserService } from "../../user/interface/user.service.interface.js";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 @injectable()
 export class StartCommand extends Command {
@@ -14,14 +20,34 @@ export class StartCommand extends Command {
     @inject(TYPES.LoggerService) private readonly loggerService: ILoggerService,
     @inject(TYPES.DotenvConfig) private readonly dotenvConfig: IDotenvConfig,
     @inject(TYPES.AdsService) private readonly adsService: AdsService,
+    @inject(TYPES.UserService) private readonly userService: IUserService
   ) {
     super();
   }
   handle(bot: Telegraf<IContextBot>): void {
     try {
       bot.start(async (ctx) => {
+        const chat = ctx.message.chat;
+        const username = "username" in chat ? chat.username : null;
+        const first_name = "first_name" in chat ? chat.first_name : null;
+        const id = chat.id;
+
+        if (!username) {
+          const filePath = path.resolve(__dirname, "../../uploads/image.png");
+          await ctx.replyWithPhoto(
+            { source: filePath },
+            {
+              caption: `Установите @username пользователя, чтобы продолжить.\nПотом нажмите /start`,
+            }
+          );
+          return;
+        }
         const { message, markup } = startCommandRes(this.dotenvConfig);
-        await this.adsService.createUser(ctx.message.chat.id)
+        await this.userService.createUser({
+          telegramId: id,
+          username,
+          first_name,
+        });
         await ctx.reply(message, markup);
       });
     } catch (error) {

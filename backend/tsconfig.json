@@ -9,7 +9,7 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "es2018",
-    "types": [],
+    // "types": ["./types"],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -45,6 +45,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types/express.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
