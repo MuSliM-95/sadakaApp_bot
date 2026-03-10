@@ -1,5 +1,5 @@
 import { api } from "@/shared/api/instance.api";
-import { IParams, ITicket } from "../types/tickets,types";
+import { IParams, ITicketR } from "../types/tickets,types";
 
 class TicketService {
   public async getTickets() {
@@ -10,7 +10,7 @@ class TicketService {
   }
 
   public async getTicket(id: number) {
-    const response = await api.get<ITicket>(`api/tickets/${id}`);
+    const response = await api.get<ITicketR>(`api/tickets/${id}`);
     console.log(response);
 
     return response;
