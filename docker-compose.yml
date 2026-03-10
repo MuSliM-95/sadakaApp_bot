@@ -17,17 +17,9 @@ services:
     restart: always
     volumes:
       - ./backend/stats.json:/app/stats.json
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      - API_SERVER=${API_SERVER}
-      - WAYPAMEURL_ADS=${WAYPAMEURL_ADS}
-      - WHATSAPP=${WHATSAPP}
-      - NEWS=${NEWS}
-      - SUPPORT=${SUPPORT}
-      - TRC20_ADDRESS_HERE=${TRC20_ADDRESS_HERE}
-      - BEP20_ADDRESS_HERE=${BEP20_ADDRESS_HERE}
-      - TON_ADDRESS_HERE=${TON_ADDRESS_HERE}
 
+    env_file: 
+      - ./.env
     depends_on: 
       - db
       - redis  
