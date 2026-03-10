@@ -33,8 +33,8 @@ export function useAdsgram({
   useEffect(() => {
     AdControllerRef.current = window.Adsgram?.init({
       blockId,
-      // debug: true,
-      // debugBannerType: "FullscreenMedia",
+      debug: true,
+      debugBannerType: "FullscreenMedia",
     });
   }, [blockId]);
 

@@ -55,7 +55,7 @@ export function TicketsList() {
   if (!data?.length) {
     return (
       <div className="bg-black/90 border min-h-screen text-white border-neutral-800">
-        <div className="flex justify-between items-center">
+        <div className={cn("flex justify-between items-center",  platform !== Platform.TDESKTOP && fullscreen ? 'pt-22' : '')}>
           <BackButton className="sticky" />
           <Button onClick={updateTicketsPage} className="cursor-pointer">
             <RotateCcw />
@@ -93,16 +93,16 @@ export function TicketsList() {
 
       <div
         className={cn(
-          "min-h-screen",
+          "min-h-screen relative",
           platform !== Platform.TDESKTOP && fullscreen
-            ? "mt-20"
+            ? "pt-24"
             : platform === Platform.TDESKTOP && fullscreen
-            ? "mt-10"
+            ? "pt-10"
             : ""
         )}
       >
-        <div className="flex justify-between items-center">
-          <BackButton className="sticky" />
+        <div className="flex relative justify-between items-center">
+          <BackButton className="static" />
 
           <Button onClick={updateTicketsPage} className="cursor-pointer">
             <RotateCcw />
