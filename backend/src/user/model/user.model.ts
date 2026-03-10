@@ -33,14 +33,11 @@ export class User extends Model<
   @Column({ type: DataType.STRING, allowNull: true })
   declare first_name: string | null;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  declare username: string;
+  @Column({ type: DataType.STRING, allowNull: true })
+  declare username: string | null;
 
   @Column({ type: DataType.BIGINT, allowNull: false, unique: true })
   declare telegramId: number;
-
-  @Column({ type: DataType.BOOLEAN, allowNull: false })
-  declare winner: boolean;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserRole)),
@@ -64,12 +61,6 @@ export class User extends Model<
   })
   declare tickets?: NonAttribute<Ticket[]>;
 
-  // @HasMany(() => Winner, {
-  //   as: "winners",
-  //   foreignKey: "telegramId",
-  //   sourceKey: "telegramId",
-  // })
-  // declare winners?: NonAttribute<Winner[]>;
 
   @HasMany(() => Ads, {
     as: "ads",

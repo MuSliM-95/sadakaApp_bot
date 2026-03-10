@@ -27,7 +27,6 @@ export class UserRepository implements IUserRepository {
     return this._model.create({
       telegramId,
       username,
-      winner: false,
       first_name,
       role: UserRole.regular,
     });

@@ -9,11 +9,10 @@ import {
 } from "@/shared/components/ui/avatar";
 import Link from "next/link";
 import { useEffect } from "react";
-import { Gamepad2, Eye, Tags } from "lucide-react";
+import { Gamepad2, Eye, Tags, AlertCircle } from "lucide-react";
 import { BackButton } from "@/features/ui/BackButton";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { saveActiveGame } from "@/store/game.slice";
-
 
 export function Profile() {
   const { data } = useUserQuery();
@@ -38,6 +37,15 @@ export function Profile() {
       className="min-h-screen bg-neutral-950 text-white px-4 pb-8"
       style={{ paddingTop: "calc(env(safe-area-inset-top) + 60px)" }}
     >
+      {!data?.username && (
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+          <AlertCircle className="w-4 h-4" />
+          <span>
+            Укажите <span className="font-semibold">@username</span> в
+            настройках профиля Telegram
+          </span>
+        </div>
+      )}
       <div className="max-w-md mx-auto space-y-8">
         <BackButton />
         {/* PROFILE HEADER */}

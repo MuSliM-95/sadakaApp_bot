@@ -32,21 +32,11 @@ export class StartCommand extends Command {
         const first_name = "first_name" in chat ? chat.first_name : null;
         const id = chat.id;
 
-        if (!username) {
-          const filePath = path.resolve(__dirname, "../../uploads/image.png");
-          await ctx.replyWithPhoto(
-            { source: filePath },
-            {
-              caption: `Установите @username пользователя, чтобы продолжить.\nПотом нажмите /start`,
-            }
-          );
-          return;
-        }
         const { message, markup } = startCommandRes(this.dotenvConfig);
         await this.userService.createUser({
           telegramId: id,
-          username,
-          first_name,
+          username: username || null,
+          first_name: first_name || null,
         });
         await ctx.reply(message, markup);
       });

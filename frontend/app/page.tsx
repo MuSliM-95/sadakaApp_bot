@@ -33,7 +33,7 @@ const tools = [
 ];
 
 export default function HomePage() {
-  useTelegramAuth()
+  useTelegramAuth();
   const dispatch = useAppDispatch();
 
   const tickets = useAppSelector((state) => state.ad.tickets);
@@ -153,14 +153,23 @@ export default function HomePage() {
         </div>
 
         {/* TITLE */}
-        <h1
+        <div
           className={cn(
-            "text-center text-lg tracking-[0.3em] mt-3 mb-3 text-neutral-500 hover:text-white transition-colors",
+            "text-center mt-3 mb-3",
             !fullscreen && platform === Platform.TDESKTOP && "mt-10 mb-10"
           )}
         >
-          <Link href="/about">INZARE</Link>
-        </h1>
+          <Link
+            href="/about"
+            className="block text-lg tracking-[0.35em] text-neutral-500 hover:text-white transition-colors"
+          >
+            INZARE
+          </Link>
+
+          <span className="block text-ls text-neutral-600 tracking-widest mt-1">
+            (Удивительный)
+          </span>
+        </div>
 
         {/* MAIN CARD */}
         <div className="bg-neutral-900/60 backdrop-blur-xl border border-white/5 rounded-3xl p-6 shadow-2xl flex flex-col gap-6">

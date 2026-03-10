@@ -2,9 +2,9 @@ import type { User, UserRole } from "../model/user.model.js";
 
 export interface IUser {
   telegramId: number;
-  username: string;
+  username: string | null;
   first_name: string | null;
-  role: UserRole
+  role?: UserRole
 }
 
 export interface IProfile {

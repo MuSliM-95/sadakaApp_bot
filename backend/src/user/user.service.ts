@@ -46,7 +46,7 @@ export class UserService implements IUserService {
 
     return {
       id: user.id,
-      username: user.username,
+      username: user.username || '',
       first_name: user.first_name || `User-${user.id}`,
       adsCount: user.ads?.length || 0,
       ticketsCount: user.tickets?.length || 0,
