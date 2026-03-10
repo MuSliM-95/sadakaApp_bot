@@ -52,7 +52,7 @@ export default function IframeGames() {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const onReward = useCallback(() => {
-    const date = Date.now() + 60 * 1000;
+    const date = Date.now() + 3 * 60 * 60 * 1000;
     dispatch(startCooldown({ timer: date, type: "game" }));
   }, [dispatch]);
 
