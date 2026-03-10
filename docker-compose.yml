@@ -27,6 +27,10 @@ services:
       - TRC20_ADDRESS_HERE=${TRC20_ADDRESS_HERE}
       - BEP20_ADDRESS_HERE=${BEP20_ADDRESS_HERE}
       - TON_ADDRESS_HERE=${TON_ADDRESS_HERE}
+
+    depends_on: 
+      - db
+      - redis  
       
 
     networks:
@@ -40,8 +44,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports: 
-      - 5435:5432
+    # ports: 
+    #   - 5435:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -61,15 +65,15 @@ services:
     restart: always # автоматически перезапускать контейнер при падении
     depends_on:
       - frontend # запускать nginx после frontend 
-      # - backend
+      - backend
     networks:
       - dev # подключаем контейнер к сети dev
   redis:
     container_name: redis_data
     image: redis:5.0
     restart: unless-stopped
-    ports:
-      - 6380:6379
+    # ports:
+    #   - 6380:6379
     command: >
       sh -c '
        mkdir -p /usr/local/etc/redis &&
