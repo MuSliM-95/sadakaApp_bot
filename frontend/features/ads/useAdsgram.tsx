@@ -22,7 +22,7 @@ export function useAdsgram({
   const { data: ads } = useAdsTicketQuery();
 
   const [isPreparing, setIsPreparing] = useState(false);
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
     if (ads != null && tickets != null) {
@@ -33,14 +33,14 @@ export function useAdsgram({
   useEffect(() => {
     AdControllerRef.current = window.Adsgram?.init({
       blockId,
-      debug: true,
-      debugBannerType: "FullscreenMedia",
+      // debug: true,
+      // debugBannerType: "FullscreenMedia",
     });
   }, [blockId]);
 
   const startCountdown = () => {
     setIsPreparing(true);
-    setCountdown(5);
+    setCountdown(3);
 
     const interval = setInterval(() => {
       setCountdown((prev) => {
