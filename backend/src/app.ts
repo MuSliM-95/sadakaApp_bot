@@ -21,6 +21,7 @@ import type { IUserService } from "./user/interface/user.service.interface.js";
 import type { AuthController } from "./auth/auth.controller.js";
 import cookieParser from "cookie-parser";
 import type { WinnerController } from "./winner/winner.controller.js";
+import { ValidateInitDate } from "./common/validate.InitDate.js";
 
 const require = createRequire(import.meta.url);
 const helmet = require("helmet");
@@ -69,6 +70,9 @@ export class App {
       this.userService
     );
     this._app.use(authMiddleware.execute.bind(authMiddleware));
+
+    const validateInitDate = new ValidateInitDate(this.dotenvConfig)
+    this._app.use(validateInitDate.execute.bind(validateInitDate))
     this._app.use(helmet());
   }
 

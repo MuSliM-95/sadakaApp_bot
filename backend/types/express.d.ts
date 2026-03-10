@@ -1,3 +1,4 @@
+import type { ITelegramUser } from "../src/types/global.ts";
 import { User, UserRole } from "../src/user/model/user.model.ts";
 
 declare module "express-session" {
@@ -11,6 +12,7 @@ declare global {
   namespace Express {
     export interface Request {
       user: User | null;
+      telegramUser: ITelegramUser;
     }
   }
 }

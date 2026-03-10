@@ -7,7 +7,6 @@ export class RoleGuard implements IMiddleware {
   constructor(private readonly roles: UserRole[]) {}
   execute(req: Request, res: Response, next: NextFunction): void {
     const user = req.user!;
-    // console.log(user);
 
     const result = this.roles.includes(user.role);
     if (!result) {

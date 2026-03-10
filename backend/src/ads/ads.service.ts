@@ -85,6 +85,8 @@ export class AdsService implements IAdsService {
     } catch (error) {
       await t.rollback();
       this.loggerService.error(error);
+      console.log(error);
+      
       throw new HTTPError(500, "Непредвиденная ошибка");
     }
   }

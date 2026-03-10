@@ -39,9 +39,7 @@ export class AuthService implements IAuthService {
     const telegramSession = JSON.parse(userTelegram);
 
     const user = await this.userServer.getUser(telegramSession.id);
-    console.log('user');
-    
-
+ 
     await this.sessionService.saveSession(req, {
       id: user!.id,
       telegramId: user!.telegramId!,

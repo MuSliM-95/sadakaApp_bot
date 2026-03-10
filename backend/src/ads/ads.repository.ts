@@ -5,7 +5,6 @@ import type { ISequelizeService } from "../db/sequelize.interface.js";
 import type { ModelStatic, Transaction } from "sequelize";
 import type { Advertising } from "../types/global.js";
 import { AdvertisingEnum, type Ads } from "./model/ads.model.js";
-import type { IRedisService } from "../common/interfaces/redis.service.interface.js";
 import type { RedisConfig } from "../configs/redis.config.js";
 
 @injectable()
@@ -54,7 +53,7 @@ export class AdsRepository implements IAdsRepository {
     redisKey: string,
     token :string
   ): Promise<string> {
-    return this.redis.client.set(redisKey, token, "EX", 40);
+    return this.redis.client.set(redisKey, token, "EX", 60);
   }
 
   public async create(
