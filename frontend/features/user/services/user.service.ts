@@ -9,7 +9,6 @@ class UserService {
   }
   public async getUsers() {
     const response = await api.get<UserRating[]>(`api/users`);
-    console.log(response);
 
     return response;
   }

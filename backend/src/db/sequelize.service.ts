@@ -41,7 +41,6 @@ export class SequelizeService implements ISequelizeService {
         this.logger.error(
           "[SequelizeService]. Ошибка при подключение к базе данных " + error
         );
-        console.log(error);
       }
     }
   }

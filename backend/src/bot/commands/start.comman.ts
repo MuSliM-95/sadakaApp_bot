@@ -8,11 +8,7 @@ import type { IDotenvConfig } from "../../configs/dotenv.interface.js";
 import { startCommandRes } from "./helpers/bot/start.helper.js";
 import type { AdsService } from "../../ads/ads.service.js";
 import type { IUserService } from "../../user/interface/user.service.interface.js";
-import { fileURLToPath } from "url";
-import path, { dirname } from "path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 @injectable()
 export class StartCommand extends Command {
@@ -35,8 +31,8 @@ export class StartCommand extends Command {
         const { message, markup } = startCommandRes(this.dotenvConfig);
         await this.userService.createUser({
           telegramId: id,
-          username: username || null,
-          first_name: first_name || null,
+          username: username,
+          first_name: first_name,
         });
         await ctx.reply(message, markup);
       });

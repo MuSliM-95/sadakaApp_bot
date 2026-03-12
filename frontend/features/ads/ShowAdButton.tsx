@@ -5,8 +5,7 @@ import {
   ReactNode,
   useCallback,
   useEffect,
-  useRef,
-  useState,
+  useRef
 } from "react";
 import { Youtube, TicketCheck } from "lucide-react";
 
@@ -46,7 +45,6 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
     const date = Date.now() + 60 * 100;
     dispatch(startCooldown({ timer: date, type: "init" }));
     if (tokenRef.current) {
-      console.log(tokenRef.current);
       addReward({ type: Advertising.REWARD, data: tokenRef.current });
     }
   }, [dispatch, addReward]);

@@ -18,7 +18,7 @@ export const startCommandRes = (dotenvConfig: IDotenvConfig) => {
       [
         Markup.button.webApp(
           "INZARE",
-          `${dotenvConfig.get("WAYPAMEURL_ADS")}`
+          `${dotenvConfig.get("CLIENT_URL_NAME")}`
         ),
       ],
       [

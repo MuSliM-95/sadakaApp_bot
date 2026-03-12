@@ -3,9 +3,7 @@ import { IWinner } from "@/features/tickets/types/tickets,types";
 
 class WinnerService {
   public async getWinners() {
-    const response = await api.get<IWinner[]>(`api/winners`);
-	console.log(response);
-	
+    const response = await api.get<IWinner[]>(`api/winners`);	
     return response;
   }
 }

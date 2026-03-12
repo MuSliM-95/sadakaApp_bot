@@ -17,10 +17,7 @@ export class AuthService implements IAuthService {
     private readonly sessionService: ISessionService,
     @inject(TYPES.UserService) private readonly userServer: IUserService
   ) {}
-  public async login(
-    req: Request,
-    body: AuthDto
-  ): Promise<void> {
+  public async login(req: Request, body: AuthDto): Promise<void> {
     const initData = new URLSearchParams(body.initData);
     const isValid = validateWebAppData(
       this.dotenvServer.get("BOT_TOKEN"),
@@ -35,11 +32,15 @@ export class AuthService implements IAuthService {
     if (!userTelegram) {
       throw new HTTPError(422, "Данные авторизации не верны");
     }
-
+   
     const telegramSession = JSON.parse(userTelegram);
 
     const user = await this.userServer.getUser(telegramSession.id);
- 
+
+    if (user?.username !== telegramSession.username) {
+      await this.userServer.updateUser(user?.telegramId!, telegramSession.username);
+    }
+
     await this.sessionService.saveSession(req, {
       id: user!.id,
       telegramId: user!.telegramId!,

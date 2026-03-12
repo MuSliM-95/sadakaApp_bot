@@ -21,9 +21,6 @@ export function useTelegramAuth() {
 		  const tg: any = window.Telegram?.WebApp;
 		  const initData = tg.initData;
 		  
-		  console.log('no');
-		  console.log(typeof initData);
-		  
         login(initData);
       }
     };

@@ -3,7 +3,6 @@ import { updateScreen } from "@/store/ad.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Maximize2, Minimize2 } from "lucide-react";
 
-
 interface Props {
   className?: string;
   isFullscreen: boolean;
@@ -39,7 +38,8 @@ hover:bg-neutral-800
 transition-all duration-200
 active:scale-95
 `,
-        isFullscreen || "top-2 right-4"
+        isFullscreen || "top-2 right-4",
+        className
       )}
     >
       {isFullscreen ? (

@@ -1,11 +1,8 @@
 "use client";
 
 import { useAdsgram } from "@/features/ads/useAdsgram";
-import { BackButton } from "@/features/ui/BackButton";
-import {
-  gameAdaTimerTick,
-  startCooldown,
-} from "@/store/ad.slice";
+import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
+import { gameAdaTimerTick, startCooldown } from "@/store/ad.slice";
 import { saveGame } from "@/store/game.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect, useState, useCallback } from "react";
@@ -114,7 +111,9 @@ export function MosaicGame() {
   };
 
   useEffect(() => {
-    dispatch(saveGame({id: 0, name: "MOSAIC.PRO", href: "games/puzzle", url: null }));
+    dispatch(
+      saveGame({ id: 0, name: "MOSAIC.PRO", href: "games/puzzle", url: null })
+    );
   }, []);
 
   // Инициализация игры
@@ -248,10 +247,9 @@ export function MosaicGame() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0c] flex flex-col items-center justify-center p-4 font-sans text-slate-100">
-      <BackButton />
-
-      <div className="text-center mb-8">
-        <h1 className="text-5xl font-black mb-2 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
+      <div className="text-center mb-8 max-w-md w-full">
+        <PlatformBackButton />
+        <h1 className="text-5xl font-black mb-2 mt-2 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">
           MOSAIC<span className="text-blue-500">.</span>PRO
         </h1>
 

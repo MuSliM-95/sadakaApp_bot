@@ -66,11 +66,14 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  public async update(telegramId: number, username: string): Promise<number> {
+  public async update(telegramId: number, username?: string): Promise<number> {
+  
+    
     const [affectedCount] = await this._model.update(
-      { username },
+      { username: username || null },
       { where: { telegramId } }
     );
+
     return affectedCount;
   }
 

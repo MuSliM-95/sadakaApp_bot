@@ -21,7 +21,7 @@ import type { IUserService } from "./user/interface/user.service.interface.js";
 import type { AuthController } from "./auth/auth.controller.js";
 import cookieParser from "cookie-parser";
 import type { WinnerController } from "./winner/winner.controller.js";
-import { ValidateInitDate } from "./common/validate.InitDate.js";
+import { CorsConfig } from "./configs/cors.config.js";
 
 const require = createRequire(import.meta.url);
 const helmet = require("helmet");
@@ -57,8 +57,9 @@ export class App {
   }
 
   public useMiddlewares() {
+    const corsConfig = new CorsConfig(this.dotenvConfig)    
     this._app.use(
-      cors({ origin: "https://parser-client.cloudpub.ru", credentials: true })
+      cors(corsConfig.config)
     );
     this._app.use(express.json());
     this._app.set('trust proxy', 1);
@@ -71,8 +72,6 @@ export class App {
     );
     this._app.use(authMiddleware.execute.bind(authMiddleware));
 
-    const validateInitDate = new ValidateInitDate(this.dotenvConfig)
-    this._app.use(validateInitDate.execute.bind(validateInitDate))
     this._app.use(helmet());
   }
 

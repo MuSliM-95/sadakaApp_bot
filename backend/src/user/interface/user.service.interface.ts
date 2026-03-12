@@ -1,3 +1,4 @@
+import type { ITelegramUser } from "../../types/global.js";
 import type { User, UserRole } from "../model/user.model.js";
 
 export interface IUser {
@@ -21,6 +22,6 @@ export interface IUserService {
   getUsers(): Promise<User[]>;
   getUsersAs(): Promise<User[]>;
   findProfile(telegramId: number): Promise<IProfile>;
-  updateUser(telegramId: number, username: string): Promise<number>;
+  updateUser(telegramId: number, username?: string): Promise<number>;
   getUser(telegramId: number): Promise<User | null>;
 }

@@ -7,6 +7,7 @@ import { AuthGuard } from "../common/guard/auth.guard.js";
 import type { IUserService } from "./interface/user.service.interface.js";
 import type { NextFunction, Request, Response } from "express";
 
+
 @injectable()
 export class UserController extends BaseController implements IUserController {
   constructor(

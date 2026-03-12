@@ -1,12 +1,11 @@
 'use client'
 import { Button } from "@/shared/components/ui/button";
-import React, { SetStateAction, useEffect } from "react";
+import React, { SetStateAction } from "react";
 import { ITicketR } from "../types/tickets,types";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useWinnerTicketMutation } from "../hooks/useWinnerTicketMutation";
 import { useWinnerDeleteTicketMutation } from "../hooks/useWinnerDeleteTicketMutation";
-// import { openTelegramLink } from "@telegram-apps/sdk";
 
 interface Props {
   className?: string;

@@ -8,6 +8,7 @@ import { TYPES } from "../types.js";
 import type { IUserRepository } from "./interface/user.repository.interface.js";
 import { HTTPError } from "../errors/http.error.class.js";
 import { UserRole, type User } from "./model/user.model.js";
+import type { ITelegramUser } from "../types/global.js";
 
 @injectable()
 export class UserService implements IUserService {
@@ -38,15 +39,14 @@ export class UserService implements IUserService {
     return this.userRepository.getUsersAs();
   }
 
-  public async updateUsername(user: User, telegramUser: any): Promise<void> {
-    
-  }
 
   public async findProfile(telegramId: number): Promise<IProfile> {
     const user = await this.userRepository.findProfile(telegramId);
+
     if (!user) {
       throw new HTTPError(404, "Пользователь не найден.");
     }
+
 
     return {
       id: user.id,
@@ -60,7 +60,7 @@ export class UserService implements IUserService {
 
   public async updateUser(
     telegramId: number,
-    username: string
+    username?: string
   ): Promise<number> {
     return this.userRepository.update(telegramId, username);
   }

@@ -11,8 +11,7 @@ class TicketService {
 
   public async getTicket(id: number) {
     const response = await api.get<ITicketR>(`api/tickets/${id}`);
-    console.log(response);
-
+   
     return response;
   }
 
