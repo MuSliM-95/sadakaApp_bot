@@ -36,45 +36,43 @@ export class AdsService implements IAdsService {
   ): Promise<{ ticket: string }> {
     const t = await this.sequelizeService.postgres.transaction();
     try {
-    
       const { type, token, iv } = body;
       const redisKey = `reward:${userId}`;
 
-      const isExists = await this.adsRepository.getRedisToken(redisKey);
-      
-      
+      const isExists = await this.adsRepository.getDelRedisToken(redisKey);
+
       if (!isExists) {
         throw new HTTPError(422, "Ошибка при просмотра рекламы.");
       }
 
+
       const secretKey = this.dotenvConfig.get("REWARD_SECRET").slice(0, 32);
-      
+
       const decipher = crypto.createDecipheriv(
         "aes-256-cbc",
         Buffer.from(secretKey),
         Buffer.from(iv, "hex")
-        );
-        
-        
-        let decrypted = decipher.update(token, "hex", "utf8");
+      );
+
+      let decrypted = decipher.update(token, "hex", "utf8");
       decrypted += decipher.final("utf8");
+      const diff = Date.now() - Number(decrypted);
       
-      
-      if (Number(decrypted) < Date.now()) {
-        throw new HTTPError(422, "Токен не валиден");
+
+      if (diff < 18 * 1000) {
+        throw new HTTPError(422, "Что то пошло не так");
       }
-   
-     
+
       await this.adsRepository.create(telegramId, type, t);
       const adsAll = await this.adsRepository.getTicketAdsLimitForUpdate(
         telegramId,
         5,
         t
-        );
-        
-        let ticket = "no";
-        if (adsAll.length === 5) {
-          await this.ticketService.createTicket(telegramId, t);
+      );
+
+      let ticket = "no";
+      if (adsAll.length === 5) {
+        await this.ticketService.createTicket(telegramId, t);
         const ids = adsAll.map((el) => el.id);
         await this.adsRepository.updateAds(ids, t);
         ticket = "created";
@@ -84,7 +82,7 @@ export class AdsService implements IAdsService {
       return { ticket };
     } catch (error) {
       await t.rollback();
-      this.loggerService.error(error);      
+      this.loggerService.error(error);
       throw new HTTPError(500, "Непредвиденная ошибка");
     }
   }
@@ -105,12 +103,16 @@ export class AdsService implements IAdsService {
       throw new HTTPError(422, "Алик, отводи ребят");
     }
 
-    const payload = `${Date.now() + 60 * 1000}`;
+    const payload = `${Date.now()}`;
     const secretKey = this.dotenvConfig.get("REWARD_SECRET").slice(0, 32);
 
     const iv = crypto.randomBytes(16);
 
-    const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(secretKey), iv);
+    const cipher = crypto.createCipheriv(
+      "aes-256-cbc",
+      Buffer.from(secretKey),
+      iv
+    );
 
     let token = cipher.update(payload, "utf-8", "hex");
     token += cipher.final("hex");

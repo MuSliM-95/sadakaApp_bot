@@ -5,13 +5,15 @@ import React from "react";
 
 interface Props {
   className?: string;
+  onclick?: () => void
 }
 
-export const BackButton: React.FC<Props> = ({ className }) => {
+export const BackButton: React.FC<Props> = ({ className, onclick }) => {
   return (
     <Button
       className={cn("absolute top-2 left-2", className)}
       variant={"ghost"}
+      onClick={onclick}
     >
       <Link href={`/`}>Назад</Link>
     </Button>

@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { RedisStore } from 'connect-redis';
+import  RedisStore  from 'connect-redis';
 import type { RedisConfig } from './redis.config.js';
 import { TYPES } from '../types.js';
 import type { ILoggerService } from '../logger/logger.service.interface.js';

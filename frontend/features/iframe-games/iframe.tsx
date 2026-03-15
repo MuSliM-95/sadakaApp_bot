@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { BackButton } from "@/features/ui/BackButton";
 import { Platform } from "@/shared/types/global.types";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
 import {
@@ -41,6 +40,24 @@ const games = [
     url: "https://www.madkidgames.com/games/block-blast-puzzle-game",
     description: "Собирай блоки и решай головоломки в Block Blast.",
     img: "/images/blockblast.jpg",
+  },
+  {
+    id: 4,
+    slug: "Cat Runner: Decorate Home",
+    title: "Cat Runner",
+    url: "https://www.madkidgames.com/games/cat-runner-decorate-home",
+    description:
+      "Играйте в Cat Runner: Decorate Home бесплатно онлайн и бегайте со своим милым котом, собирая монеты, чтобы украсить дом своей мечты.",
+    img: "https://www.madkidgames.com/games/cat-runner-decorate-home/thumb_2.jpg",
+  },
+  {
+    id: 5,
+    slug: "Mountain Climb 4x4 : Car Drive",
+    title: "Mountain Climbr",
+    url: "https://www.madkidgames.com/games/mountain-climb-4x4-car-drive",
+    description:
+      "Играйте в Mountain Climb 4x4: Car Drive бесплатно онлайн и управляйте мощными внедорожниками 4x4 по горам и преодолевайте препятствия в этом захватывающем симуляторе восхождения.",
+    img: "https://www.madkidgames.com/games/mountain-climb-4x4-car-drive/thumb_2.jpg",
   },
 ];
 
@@ -91,7 +108,6 @@ export default function IframeGames() {
     return () => window.removeEventListener("resize", checkOrientation);
   }, []);
 
-  // telegram init
   useEffect(() => {
     const webApp: any = window.Telegram?.WebApp;
     if (!webApp) return;
@@ -143,6 +159,10 @@ export default function IframeGames() {
     dispatch(saveActiveGame({ url }));
   };
 
+  const handlerExist = () => {
+    dispatch(saveActiveGame({ url: null }));
+  };
+
   return (
     <div className="min-h-screen bg-black text-white p-3">
       <AdsInfoBanner isPreparing={isPreparing} countdown={countdown} />
@@ -186,11 +206,11 @@ export default function IframeGames() {
         <div className="fixed inset-0 bg-black bg-opacity-95 flex flex-col z-50 animate-fadeIn">
           {/* close */}
           {showBanner && (
-            <PlatformBackButton>
+            <PlatformBackButton onclick={handlerExist}>
               <div className="flex justify-start px-2">
                 <button
                   className="text-white font-bold cursor-pointer hover:text-red-500 transition"
-                  onClick={() => dispatch(saveActiveGame({ url: null }))}
+                  onClick={handlerExist}
                 >
                   Выйти
                 </button>
@@ -201,9 +221,17 @@ export default function IframeGames() {
           {/* banner */}
           {showBanner && (
             <div className="flex items-center justify-center bg-gray-800 bg-opacity-90 text-yellow-300 py-2 text-center text-sm font-medium mb-2 animate-fadeIn">
-              {platform === Platform.TDESKTOP
-                ? "💻 Для лучшего опыта: попробуйте полноэкранный режим."
-                : "📱 Для лучшего опыта: попробуйте развернуть телефон."}
+              {platform === Platform.TDESKTOP ? (
+                <div className="">
+                  💻 Для лучшего опыта: попробуйте полноэкранный режим.{" "}
+                  <FullscreenButton
+                    className="static  px-2 py-1"
+                    isFullscreen={isFullscreen}
+                  />
+                </div>
+              ) : (
+                "📱 Для лучшего опыта: попробуйте развернуть телефон."
+              )}
             </div>
           )}
 

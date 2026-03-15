@@ -9,11 +9,13 @@ import React, { ReactNode } from "react";
 interface Props {
   className?: string;
   children?: ReactNode;
+  onclick?: () => void
 }
 
 export const PlatformBackButton: React.FC<Props> = ({
   className,
   children,
+  onclick
 }) => {
   const platform = useAppSelector((state) => state.ad.platform);
   const fullscreen = useAppSelector((state) => state.ad.fullscreen);
@@ -28,7 +30,7 @@ export const PlatformBackButton: React.FC<Props> = ({
           : "pt-2"
       )}
     >
-      <BackButton className={cn("sticky")} />
+      <BackButton onclick={onclick}  className={cn("sticky")} />
       {children}
     </div>
   );

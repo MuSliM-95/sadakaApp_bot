@@ -77,11 +77,11 @@ export default function HomePage() {
     const webApp: any = window.Telegram?.WebApp;
     if (!webApp) return;
 
-    if (fullscreen && !webApp.isFullscreen) {
+    if (webApp.initData && fullscreen && !webApp.isFullscreen) {
       webApp.requestFullscreen?.();
     }
 
-    if (!fullscreen && webApp.isFullscreen) {
+    if (webApp.initData && !fullscreen && webApp.isFullscreen) {
       webApp.exitFullscreen?.();
     }
   }, [fullscreen]);
