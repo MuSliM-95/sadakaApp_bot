@@ -42,7 +42,7 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
   const dispatch = useAppDispatch();
 
   const onReward = useCallback(() => {
-    const date = Date.now() + 60 * 100;
+    const date = Date.now() + 120 * 1000;
     dispatch(startCooldown({ timer: date, type: "init" }));
     if (tokenRef.current) {
       addReward({ type: Advertising.REWARD, data: tokenRef.current });
