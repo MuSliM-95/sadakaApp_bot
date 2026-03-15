@@ -4,15 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Platform } from "@/shared/types/global.types";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
-import {
-  gameAdaTimerTick,
-  savePlatform,
-  startCooldown,
-} from "@/store/ad.slice";
+import { gameAdaTimerTick, startCooldown } from "@/store/ad.slice";
 import { useAdsgram } from "@/features/ads/useAdsgram";
 import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
 import { saveActiveGame, saveGame } from "@/store/game.slice";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
+import { useTelegramWebApp } from "../ads/useTelegramWebApp";
 
 const games = [
   {
@@ -71,7 +68,6 @@ export default function IframeGames() {
   const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
 
   const [isLandscape, setIsLandscape] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const onReward = useCallback(() => {
     const date = Date.now() + 240 * 1000;
@@ -108,43 +104,7 @@ export default function IframeGames() {
     return () => window.removeEventListener("resize", checkOrientation);
   }, []);
 
-  useEffect(() => {
-    const webApp: any = window.Telegram?.WebApp;
-    if (!webApp) return;
-
-    const platform = webApp.platform;
-
-    dispatch(savePlatform(platform));
-
-    webApp.ready();
-    webApp.expand();
-
-    setIsFullscreen(webApp.isFullscreen);
-
-    const handler = () => {
-      setIsFullscreen(webApp.isFullscreen);
-    };
-
-    webApp.onEvent("fullscreenChanged", handler);
-
-    return () => {
-      webApp.offEvent("fullscreenChanged", handler);
-    };
-  }, []);
-
-  // fullscreen control
-  useEffect(() => {
-    const webApp: any = window.Telegram?.WebApp;
-    if (!webApp) return;
-
-    if (fullscreen && !webApp.isFullscreen) {
-      webApp.requestFullscreen?.();
-    }
-
-    if (!fullscreen && webApp.isFullscreen) {
-      webApp.exitFullscreen?.();
-    }
-  }, [fullscreen]);
+  const { isFullscreen } = useTelegramWebApp(fullscreen);
 
   const showBanner =
     (platform === Platform.TDESKTOP && !fullscreen) ||

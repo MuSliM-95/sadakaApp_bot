@@ -1,6 +1,7 @@
 "use client";
 
 import { ShowAdButton } from "@/features/ads/ShowAdButton";
+import { useTelegramWebApp } from "@/features/ads/useTelegramWebApp";
 import { useTelegramAuth } from "@/features/auth/hooks/useTelegramAuth";
 import { useUserQuery } from "@/features/user/hooks/useUserQuery";
 import { cn } from "@/lib/utils";
@@ -11,11 +12,11 @@ import {
 } from "@/shared/components/ui/avatar";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
 import { Platform } from "@/shared/types/global.types";
-import { savePlatform, saveUser } from "@/store/ad.slice";
+import { saveUser } from "@/store/ad.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Tags } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const tools = [
   {
@@ -41,52 +42,12 @@ export default function HomePage() {
   const platform = useAppSelector((state) => state.ad.platform);
   const { data: user } = useUserQuery();
 
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
   useEffect(() => {
     if (!user) return;
     dispatch(saveUser(user));
   }, []);
 
-  // 1️⃣ Инициализация (один раз)
-  useEffect(() => {
-    const webApp: any = window.Telegram?.WebApp;
-    if (!webApp) return;
-    const platform = webApp.platform;
-
-    dispatch(savePlatform(platform));
-
-    webApp.ready();
-    webApp.expand();
-
-    setIsFullscreen(webApp.isFullscreen);
-
-    const handler = () => {
-      setIsFullscreen(webApp.isFullscreen);
-    };
-
-    webApp.onEvent("fullscreenChanged", handler);
-
-    return () => {
-      webApp.offEvent("fullscreenChanged", handler);
-    };
-  }, []);
-
-  // 2️⃣ Реакция на изменение redux
-  useEffect(() => {
-    const webApp: any = window.Telegram?.WebApp;
-    if (!webApp) return;
-
-    if (webApp.initData && fullscreen && !webApp.isFullscreen) {
-      webApp.requestFullscreen?.();
-    }
-
-    if (webApp.initData && !fullscreen && webApp.isFullscreen) {
-      webApp.exitFullscreen?.();
-    }
-  }, [fullscreen]);
-
-  // 3️⃣ Переключатель
+  const { isFullscreen } = useTelegramWebApp(fullscreen);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white flex justify-center px-4 pt-20 pb-8">
