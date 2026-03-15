@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ReactElement,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef
-} from "react";
+import { ReactElement, ReactNode, useCallback, useEffect, useRef } from "react";
 import { Youtube, TicketCheck } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -42,7 +36,7 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
   const dispatch = useAppDispatch();
 
   const onReward = useCallback(() => {
-    const date = Date.now() + 120 * 1000;
+    const date = Date.now() + 10 * 1000;
     dispatch(startCooldown({ timer: date, type: "init" }));
     if (tokenRef.current) {
       addReward({ type: Advertising.REWARD, data: tokenRef.current });
