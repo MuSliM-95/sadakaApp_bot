@@ -124,11 +124,11 @@ export default function HomePage() {
             href="/about"
             className="block text-lg tracking-[0.35em] text-neutral-500 hover:text-white transition-colors"
           >
-            INZARE
+            CADAKA
           </Link>
 
           <span className="block text-ls text-neutral-600 tracking-widest mt-1">
-            (Удивительный)
+            (Милостыня)
           </span>
         </div>
 
