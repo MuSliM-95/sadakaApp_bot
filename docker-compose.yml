@@ -36,8 +36,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports: 
-      - 5435:5432
+    # ports: 
+    #   - 5435:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -64,8 +64,8 @@ services:
     container_name: redis_data
     image: redis:7
     restart: unless-stopped
-    ports:
-      - 6380:6379
+    # ports:
+    #   - 6380:6379
     command: >
       sh -c '
        mkdir -p /usr/local/etc/redis &&
