@@ -5,7 +5,7 @@ import { Markup } from "telegraf";
 export const startCommandRes = (dotenvConfig: IDotenvConfig) => {
   return {
     message: dedent(`
-  INZARE — это небольшой стартовый MVP в формате Telegram-бота.
+  CADAKA (Милостыня) — это небольшой стартовый MVP-проект для благотворительности, реализованный в формате Telegram-бота.
   
 	На данном этапе проводится техническая проверка системы:
 	— интеграции рекламных блоков
@@ -17,7 +17,7 @@ export const startCommandRes = (dotenvConfig: IDotenvConfig) => {
     markup: Markup.inlineKeyboard([
       [
         Markup.button.webApp(
-          "INZARE",
+          "CADAKA",
           `${dotenvConfig.get("CLIENT_URL_NAME")}`
         ),
       ],

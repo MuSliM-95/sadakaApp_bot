@@ -59,7 +59,7 @@ export class AdsRepository implements IAdsRepository {
     redisKey: string,
     token: string
   ): Promise<string> {
-    return this.redis.client.set(redisKey, token, "EX", 50);
+    return this.redis.client.set(redisKey, token, "EX", 60);
   }
 
   public async create(

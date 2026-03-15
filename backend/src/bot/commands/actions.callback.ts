@@ -59,7 +59,7 @@ export class ActionCallback extends Command {
 
         if (!("callback_query" in ctx.update)) return;
 
-        const { id } = ctx.update.callback_query.message?.chat!;
+        // const { id } = ctx.update.callback_query.message?.chat!;
 
         const { message, markup } = startCommandRes(this.dotenvConfig);
         await ctx.editMessageText(message, markup);
@@ -68,7 +68,7 @@ export class ActionCallback extends Command {
       bot.action("affiliate_projects", async (ctx) => {
         await ctx.answerCbQuery();
         await ctx.editMessageText(
-          "Скоро здесь появятся проекты наших друзей и партнеров, по воле Аллаха.",
+          "Скоро здесь появятся проекты наших друзей и партнеров, по воле Аллах1а.",
           Markup.inlineKeyboard([[back]])
         );
       });
