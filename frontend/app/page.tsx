@@ -266,16 +266,22 @@ export default function HomeGamesPage() {
       {activeGame && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
           <div className="flex justify-between items-center">
-            <PlatformBackButton onclick={exitGame}>
-              {platform === Platform.TDESKTOP && (
-                <FullscreenButton
-                  className="sticky"
-                  isFullscreen={isFullscreen}
-                />
-              )}
-            </PlatformBackButton>
+            {showBanner && (
+              <PlatformBackButton onclick={exitGame}>
+                {platform === Platform.TDESKTOP && (
+                  <FullscreenButton
+                    className="sticky"
+                    isFullscreen={isFullscreen}
+                  />
+                )}
+              </PlatformBackButton>
+            )}
           </div>
-          <iframe src={activeGame} className="flex-1 w-full" />
+          <iframe
+            src={activeGame}
+            className="flex-1 w-full"
+            sandbox="allow-scripts allow-same-origin"
+          />
         </div>
       )}
 
