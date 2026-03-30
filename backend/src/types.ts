@@ -25,4 +25,10 @@ export const TYPES = {
   WinnerController: Symbol.for("WinnerController"),
   WinnerService: Symbol.for("WinnerService"),
   WinnerRepository: Symbol.for("WinnerRepository"),
+  GameController: Symbol.for("GameController"),
+  GameRepository: Symbol.for("GameRepository"),
+  GameService: Symbol.for("GameService"),
+  CategoryService: Symbol.for("CategoryService"),
+  CategoryController: Symbol.for("CategoryController"),
+  CategoryRepository: Symbol.for("CategoryRepository"),
 };

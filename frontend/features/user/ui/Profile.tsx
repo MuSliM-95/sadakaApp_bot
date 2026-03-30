@@ -13,6 +13,11 @@ import { Gamepad2, Eye, Tags, AlertCircle } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { saveActiveGame } from "@/store/game.slice";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
+import { AddGameForm } from "../../iframe-games/AddGameForm";
+import { UserRole } from "../types/user.types";
+import { Platform } from "@/shared/types/global.types";
+import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
+import { useTelegramWebApp } from "@/features/ads/useTelegramWebApp";
 
 export function Profile() {
   const { data } = useUserQuery();
@@ -24,6 +29,10 @@ export function Profile() {
   };
 
   const playedGames = useAppSelector((state) => state.game.playedGames);
+  const platform = useAppSelector((state) => state.ad.platform);
+  const fullscreen = useAppSelector((state) => state.ad.fullscreen);
+
+  const { isFullscreen } = useTelegramWebApp(fullscreen);
 
   useEffect(() => {
     const webApp: any = window.Telegram?.WebApp;
@@ -32,12 +41,17 @@ export function Profile() {
     webApp.expand();
   }, []);
 
+  console.log(data);
+
   return (
-    <div
-      className="min-h-screen bg-neutral-950 text-white px-4 pb-8"
-    >
+    <div className="min-h-screen bg-neutral-950 text-white px-4 pb-8">
       <div className="max-w-md mx-auto space-y-8">
-        <PlatformBackButton />
+        <PlatformBackButton>
+          {" "}
+          {platform === Platform.TDESKTOP && (
+            <FullscreenButton className="sticky" isFullscreen={isFullscreen} />
+          )}{" "}
+        </PlatformBackButton>
         {!data?.username && (
           <div className="flex items-center -mt-4 gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-300">
             <AlertCircle className="w-4 h-4" />
@@ -88,6 +102,7 @@ export function Profile() {
             </div>
           </div>
         </div>
+        {data?.role === UserRole.admin && <AddGameForm />}
 
         {/* PLAYED GAMES */}
         <div>

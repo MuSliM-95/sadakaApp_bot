@@ -1,87 +1,168 @@
 "use client";
 
-import { ShowAdButton } from "@/features/ads/ShowAdButton";
+import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { Platform } from "@/shared/types/global.types";
+import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
+import { gameAdaTimerTick, startCooldown, saveUser } from "@/store/ad.slice";
+import { useAdsgram } from "@/features/ads/useAdsgram";
+import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+import { saveActiveGame, saveGame } from "@/store/game.slice";
 import { useTelegramWebApp } from "@/features/ads/useTelegramWebApp";
 import { useTelegramAuth } from "@/features/auth/hooks/useTelegramAuth";
 import { useUserQuery } from "@/features/user/hooks/useUserQuery";
+import { api } from "@/shared/api/instance.api";
 import { cn } from "@/lib/utils";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/shared/components/ui/avatar";
-import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
-import { Platform } from "@/shared/types/global.types";
-import { saveUser } from "@/store/ad.slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { Tags } from "lucide-react";
+import { Tags, Gift } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { ShowAdButton } from "@/features/ads/ShowAdButton";
+import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
+import { Category, Game } from "@/features/iframe-games/types/types";
 
-const tools = [
-  {
-    href: "/games/puzzle",
-    title: "MOSAIC.PRO",
-    description: "Головоломка",
-    icon: "🧠",
-  },
-  {
-    href: "/games",
-    title: "Другие игры",
-    description: "Отдохни немного",
-    icon: "🕹",
-  },
-];
+const fetchGames = async (): Promise<Game[]> => {
+  const res = await api.get<Game[]>("api/games");
+  return res || [];
+};
 
-export default function HomePage() {
+export default function HomeGamesPage() {
   useTelegramAuth();
+
   const dispatch = useAppDispatch();
 
   const tickets = useAppSelector((state) => state.ad.tickets);
   const fullscreen = useAppSelector((state) => state.ad.fullscreen);
   const platform = useAppSelector((state) => state.ad.platform);
+  const secondsGameLeft = useAppSelector((state) => state.ad.secondsGameLeft);
+  const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
+  const activeGame = useAppSelector((state) => state.game.activeGame);
+
   const { data: user } = useUserQuery();
 
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  // SAVE USER
   useEffect(() => {
-    if (!user) return;
-    dispatch(saveUser(user));
+    if (user) dispatch(saveUser(user));
+  }, [user]);
+
+  useEffect(() => {
+    // Проверяем, был ли уже запуск в этой сессии
+    const isFirstLoad = !sessionStorage.getItem("app_initialized");
+
+    if (isFirstLoad) {
+      dispatch(saveActiveGame({ url: null }));
+
+      // Помечаем, что первый запуск прошел
+      sessionStorage.setItem("app_initialized", "true");
+    }
+  }, [dispatch]);
+
+  // GAMES
+  const {
+    data: games,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["games"],
+    queryFn: fetchGames,
+  });
+
+  // ADS
+  const onReward = useCallback(() => {
+    const date = Date.now() + 240 * 1000;
+    dispatch(startCooldown({ timer: date, type: "game" }));
+  }, [dispatch]);
+
+  const { showAd, isPreparing, countdown } = useAdsgram({
+    blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
+    onReward,
+    onError: () => {},
+  });
+
+  useEffect(() => {
+    if (!cooldownGame) return;
+    const i = setInterval(() => dispatch(gameAdaTimerTick()), 1000);
+    return () => clearInterval(i);
+  }, [cooldownGame]);
+
+  // ORIENTATION
+  useEffect(() => {
+    const check = () => setIsLandscape(window.innerWidth > window.innerHeight);
+    window.addEventListener("resize", check);
+    check();
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   const { isFullscreen } = useTelegramWebApp(fullscreen);
 
+  const showBanner =
+    (platform === Platform.TDESKTOP && !fullscreen) ||
+    (platform !== Platform.TDESKTOP && !isLandscape);
+
+  const startGame = (url: string, title: string, id: number) => {
+    if (secondsGameLeft <= 0) showAd();
+
+    dispatch(saveGame({ id, name: title, href: "/", url }));
+    dispatch(saveActiveGame({ url }));
+  };
+
+  const exitGame = () => dispatch(saveActiveGame({ url: null }));
+
+  if (isLoading) return <div className="p-4">Загрузка...</div>;
+  if (error) return <div className="p-4 text-red-500">Ошибка</div>;
+
+  // categories
+  const categories =
+    games?.reduce((acc: Category[], game) => {
+      game.categories?.forEach((cat) => {
+        if (!acc.find((c) => c.id === cat.id)) acc.push(cat);
+      });
+      return acc;
+    }, []) || [];
+
+  const filteredGames = activeCategory
+    ? games?.filter((g) => g.categories.some((c) => c.slug === activeCategory))
+    : games;
+
   return (
-    <div className="min-h-screen bg-neutral-950 text-white flex justify-center px-4 pt-20 pb-8">
-      <div className="w-full max-w-md flex flex-col justify-between">
+    <div className="min-h-screen bg-black text-white pb-12 px-3 pt-4">
+      <div className="max-w-md mx-auto flex flex-col gap-6">
+        {/* HEADER */}
         <div
           className={cn(
-            "flex justify-between items-center gap-3 p-2 bg-neutral-900/60 backdrop-blur-md rounded-full border border-white/10 shadow-md",
-            platform !== Platform.TDESKTOP && fullscreen ? "mt-8" : "-mt-6"
+            "flex items-center justify-between",
+            platform !== Platform.TDESKTOP ? "mt-22" : "mt-5"
           )}
         >
-          {/* Левая часть: аватар и имя */}
-          <Link
-            href="/profile"
-            className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition"
-          >
-            <Avatar className="w-9 h-9">
-              <AvatarImage
-                alt="user avatar"
-                src="https://github.com/shadcn.png"
-              />
+          <Link href="/profile" className="flex items-center gap-3">
+            <Avatar className="w-10 h-10">
+              <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>
                 {user?.username?.slice(0, 1) ?? "U"}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm font-medium text-neutral-200 truncate max-w-[120px]">
-              {user?.first_name ?? user?.username ?? "User"}
-            </span>
+
+            <div>
+              <div className="text-xs text-neutral-400">
+                @{user?.username ?? "user"}
+              </div>
+              <div className="text-sm font-semibold">
+                {user?.first_name ?? "Player"}
+              </div>
+            </div>
           </Link>
 
-          {/* Правая часть: рейтинг и билеты */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Link
               href={`/rating?id=${user?.id}`}
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500/20 hover:bg-yellow-400/30 text-yellow-400 transition"
+              className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500/20 hover:bg-yellow-400/30 text-yellow-400 transition"
               title="Рейтинг"
             >
               <svg
@@ -99,83 +180,137 @@ export default function HomePage() {
                 />
               </svg>
             </Link>
-
             <Link
-              href={`/profile/tickets`}
-              className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 hover:bg-blue-400/20 hover:border-blue-400 transition-all duration-200"
-              title="Билеты"
+              href="/profile/tickets"
+              className="flex items-center gap-2 px-2 py-1 rounded-xl bg-white/5 border border-white/10"
             >
-              <Tags size={16} className="text-blue-400" />
-              <span className="text-sm font-medium text-blue-200">
-                {tickets}
-              </span>
+              <Tags size={14} />
+              <span className="text-sm">{tickets}</span>
             </Link>
           </div>
         </div>
 
-        {/* TITLE */}
+        {/* Ad Button */}
         <div
           className={cn(
-            "text-center mt-3 mb-3",
-            !fullscreen && platform === Platform.TDESKTOP && "mt-10 mb-10"
+            "rounded-3xl bg-gradient-to-r p-[2px] transition-transform active:scale-[0.97]"
           )}
         >
-          <Link
-            href="/about"
-            className="block text-lg tracking-[0.35em] text-neutral-500 hover:text-white transition-colors"
-          >
-            CADAKA
-          </Link>
-
-          <span className="block text-ls text-neutral-600 tracking-widest mt-1">
-            (Милостыня)
-          </span>
+          <ShowAdButton className="w-full p-4 rounded-3xl bg-neutral-950 text-white font-bold text-sm hover:opacity-90 transition-opacity">
+            Получить билет
+          </ShowAdButton>
         </div>
 
-        {/* MAIN CARD */}
-        <div className="bg-neutral-900/60 backdrop-blur-xl border border-white/5 rounded-3xl p-6 shadow-2xl flex flex-col gap-6">
-          {/* Ad Button */}
-          <div
+        {/* GIVEAWAY */}
+        <div className="relative overflow-hidden rounded-[2rem] p-5 bg-neutral-900 border border-white/5">
+          <div className="absolute top-0 right-0 p-8 bg-yellow-500/5 rounded-full blur-3xl" />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 text-yellow-500 text-[10px] font-black uppercase tracking-widest mb-1">
+              <Gift size={12} /> Weekly Event
+            </div>
+            <div className="text-xl font-black mb-1">Большой розыгрыш</div>
+            <div className="text-xs text-neutral-400">
+              Накапливай билеты, чтобы занять топ в рейтинге!
+            </div>
+          </div>
+        </div>
+
+        <AdsInfoBanner isPreparing={isPreparing} countdown={countdown} />
+
+        {/* MODERN CATEGORIES */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
+          <button
+            onClick={() => setActiveCategory(null)}
             className={cn(
-              "rounded-3xl bg-gradient-to-r p-[2px] transition-transform active:scale-[0.97]"
+              "whitespace-nowrap px-5 py-2.5 rounded-2xl text-xs font-bold transition-all",
+              !activeCategory
+                ? "bg-white text-black shadow-lg shadow-white/10"
+                : "bg-neutral-900 text-neutral-500 border border-white/5"
             )}
           >
-            <ShowAdButton className="w-full p-4 rounded-3xl bg-neutral-950 text-white font-bold text-sm hover:opacity-90 transition-opacity">
-              Получить билет
-            </ShowAdButton>
-          </div>
-
-          {/* Tools */}
-          <div className="space-y-4">
-            {tools.map((tool) => (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                className="group block rounded-2xl bg-neutral-800 border border-white/5 p-4 shadow-md transition-all duration-200 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-purple-700 hover:to-indigo-700"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="text-3xl transition-transform group-hover:rotate-12">
-                    {tool.icon}
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold">{tool.title}</div>
-                    <div className="text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors">
-                      {tool.description}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+            Все игры
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.slug)}
+              className={cn(
+                "whitespace-nowrap px-5 py-2.5 rounded-2xl text-xs font-bold transition-all border",
+                activeCategory === cat.slug
+                  ? "bg-yellow-500 border-yellow-400 text-black"
+                  : "bg-neutral-900 text-neutral-500 border-white/5"
+              )}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
 
-        {/* FOOTER */}
-        <p className="mt-10 text-center text-xs text-neutral-600">
-          Простые инструменты для сосредоточения
-        </p>
+        {/* GAMES */}
+        <div className="grid grid-cols-2 gap-3">
+          {filteredGames?.map((game) => (
+            <div
+              key={game.id}
+              onClick={() => startGame(game.url, game.title, game.id)}
+              className="bg-neutral-900 rounded-2xl overflow-hidden"
+            >
+              <img src={game.img} className="w-full h-28 object-cover" />
+
+              <div className="p-2 text-sm font-semibold">{game.title}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      {/* DESKTOP FULLSCREEN BUTTON */}
-      <FullscreenButton isFullscreen={isFullscreen} />
+
+      {/* GAME */}
+      {activeGame && (
+        <div className="fixed inset-0 bg-black z-50 flex flex-col">
+          <div className="flex justify-between items-center">
+            <PlatformBackButton onclick={exitGame}>
+              {platform === Platform.TDESKTOP && (
+                <FullscreenButton
+                  className="sticky"
+                  isFullscreen={isFullscreen}
+                />
+              )}
+            </PlatformBackButton>
+          </div>
+          <iframe src={activeGame} className="flex-1 w-full" />
+        </div>
+      )}
+
+      {/* FOOTER */}
+      <footer className="mt-3 flex flex-col items-center gap-2 border-t border-white/5 pt-2">
+        {/* Компактная навигация в один ряд */}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/terms"
+            className="px-3 py-1.5 rounded-xl bg-white/[0.03] text-[10px] font-bold text-neutral-500 hover:text-white transition-colors"
+          >
+            ПРАВОВАЯ ИНФОРМАЦИЯ
+          </Link>
+
+          <span className="text-neutral-800 text-[10px]">•</span>
+
+          <Link
+            href="/about"
+            className="px-3 py-1.5 rounded-xl bg-white/[0.03] text-[10px] font-bold text-neutral-500 hover:text-white transition-colors"
+          >
+            О НАС
+          </Link>
+        </div>
+
+        {/* Нижняя строчка: версия и копирайт */}
+        <div className="flex items-center gap-3 opacity-30">
+          <span className="text-[9px] font-mono tracking-widest uppercase">
+            WayGame v2.0
+          </span>
+          <div className="w-[1px] h-2 bg-white/20" />
+          <span className="text-[9px] font-medium uppercase tracking-tight">
+            © {new Date().getFullYear()}
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }

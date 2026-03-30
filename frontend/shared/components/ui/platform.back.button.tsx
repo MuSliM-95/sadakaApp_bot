@@ -26,7 +26,7 @@ export const PlatformBackButton: React.FC<Props> = ({
         platform !== Platform.TDESKTOP && fullscreen
           ? "pt-22"
           : platform === Platform.TDESKTOP && fullscreen
-          ? "pt-10"
+          ? "pt-4"
           : "pt-2"
       )}
     >

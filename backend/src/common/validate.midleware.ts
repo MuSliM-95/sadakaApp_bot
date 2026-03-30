@@ -11,7 +11,7 @@ export class ValidateMiddleware implements IMiddleware {
     private sours: ValidationSource = "body"
   ) {}
   execute(req: Request, res: Response, next: NextFunction): void {
-    const data = req[this.sours];
+    const data = req[this.sours];   
 
     const instance = plainToClass(this.classValidate, data, {
       enableImplicitConversion: true,

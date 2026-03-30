@@ -47,11 +47,7 @@ export class FetchClient {
     options: RequestOptions = {}
   ) {
     let url = `${this.baseUrl}/${endpoint}`;
-    // const initData = window.Telegram?.WebApp.initData;
-
-    // if (!initData) {
-    //   throw new Error("Telegram initData not available");
-    // }
+ 
 
     if (options.params) {
       url += this.createSearchParams(options.params);
@@ -64,7 +60,6 @@ export class FetchClient {
       headers: {
         ...(!!options?.headers && options.headers),
         ...this.headers,
-        // "X-Telegram-Init-Data": initData,
       },
     };
 
@@ -72,6 +67,8 @@ export class FetchClient {
 
     if (!response.ok) {
       const error = (await response.json()) as { err: string } | undefined;
+      console.log(error);
+      
       throw new FetchError(response.status, error?.err || response.statusText);
     }
 

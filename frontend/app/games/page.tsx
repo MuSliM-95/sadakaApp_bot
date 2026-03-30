@@ -1,5 +1,6 @@
 "use client";
 
+import GamesPage from "@/features/iframe-games/GamesPage";
 import PageLoader from "@/shared/components/ui/PageLoader";
 import dynamic from "next/dynamic";
 
@@ -18,5 +19,5 @@ const IframeGamesLazy = dynamic(
 export default function GamesMain() {
 
 
-  return <IframeGamesLazy /> ;
+  return <GamesPage /> ;
 }

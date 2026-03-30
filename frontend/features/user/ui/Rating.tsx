@@ -57,7 +57,7 @@ export function Rating() {
 
   return (
     <div className={cn("min-h-screen bg-black flex justify-center items-center text-white p-4 pb-28")}>
-      <div className="max-w-md w-full">
+      <div className="max-w-md w-full min-h-screen">
         {" "}
         {/* Отступ снизу для плашки */}
         <PlatformBackButton>

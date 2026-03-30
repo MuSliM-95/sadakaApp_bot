@@ -22,6 +22,8 @@ import type { AuthController } from "./auth/auth.controller.js";
 import cookieParser from "cookie-parser";
 import type { WinnerController } from "./winner/winner.controller.js";
 import { CorsConfig } from "./configs/cors.config.js";
+import type { GameController } from "./game/game.controller.js";
+import type { CategoryController } from "./category/category.controller.js";
 
 const require = createRequire(import.meta.url);
 const helmet = require("helmet");
@@ -43,6 +45,10 @@ export class App {
     private readonly authController: AuthController,
     @inject(TYPES.TicketController)
     private readonly ticketController: TicketController,
+    @inject(TYPES.CategoryController)
+    private readonly categoryController: CategoryController,
+    @inject(TYPES.GameController)
+    private readonly gameController: GameController,
     @inject(TYPES.UserController)
     private readonly userController: UserController,
     @inject(TYPES.UserService) private readonly userService: IUserService,
@@ -85,7 +91,8 @@ export class App {
     this._app.use("/api", this.ticketController.router);
     this._app.use("/api", this.userController.router);
     this._app.use("/api", this.winnerController.router);
-    // this._app.use("/api", this.authController.router);
+    this._app.use("/api", this.gameController.router);
+    this._app.use("/api", this.categoryController.router);
   }
 
   public async init() {

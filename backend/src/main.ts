@@ -23,6 +23,8 @@ import { RedisConfig } from "./configs/redis.config.js";
 import { SessionConfig } from "./configs/session.config.js";
 import { authBindings } from "./auth/main.js";
 import { winnerBindings } from "./winner/main.js";
+import { gameBindings } from "./game/main.js";
+import { categoryBindings } from "./category/main.js";
 
 const appBindings = new ContainerModule(
   (options: ContainerModuleLoadOptions) => {
@@ -57,7 +59,9 @@ async function bootstrap(): Promise<IBootstrapReturn> {
     adsBindings,
     ticketBindings,
     winnerBindings,
-    userBindings
+    userBindings,
+    gameBindings,
+    categoryBindings
   );
 
   const app = container.get<App>(TYPES.Application);

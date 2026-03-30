@@ -45,6 +45,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["src/**/*", "types/express.d.ts"],
+  "include": ["src/**/*", "types/express.d.ts", "src/category/.service.interface.ts"],
   "exclude": ["node_modules", "dist"]
 }
