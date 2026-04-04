@@ -13,7 +13,7 @@ import { Gamepad2, Eye, Tags, AlertCircle } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { saveActiveGame } from "@/store/game.slice";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
-import { AddGameForm } from "../../iframe-games/AddGameForm";
+import { AddGameForm } from "./AddGameForm";
 import { UserRole } from "../types/user.types";
 import { Platform } from "@/shared/types/global.types";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";

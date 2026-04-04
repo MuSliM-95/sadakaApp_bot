@@ -6,8 +6,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Platform } from "@/shared/types/global.types";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
 import { gameAdaTimerTick, startCooldown, saveUser } from "@/store/ad.slice";
-import { useAdsgram } from "@/features/ads/useAdsgram";
-import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+// import { useAdsgram } from "@/features/ads/useAdsgram";
+// import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
 import { saveActiveGame, saveGame } from "@/store/game.slice";
 import { useTelegramWebApp } from "@/features/ads/useTelegramWebApp";
 import { useTelegramAuth } from "@/features/auth/hooks/useTelegramAuth";
@@ -38,7 +38,7 @@ export default function HomeGamesPage() {
   const tickets = useAppSelector((state) => state.ad.tickets);
   const fullscreen = useAppSelector((state) => state.ad.fullscreen);
   const platform = useAppSelector((state) => state.ad.platform);
-  const secondsGameLeft = useAppSelector((state) => state.ad.secondsGameLeft);
+  // const secondsGameLeft = useAppSelector((state) => state.ad.secondsGameLeft);
   const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
   const activeGame = useAppSelector((state) => state.game.activeGame);
 
@@ -75,16 +75,21 @@ export default function HomeGamesPage() {
   });
 
   // ADS
-  const onReward = useCallback(() => {
-    const date = Date.now() + 240 * 1000;
-    dispatch(startCooldown({ timer: date, type: "game" }));
-  }, [dispatch]);
+  // const onReward = useCallback(() => {
+  //   const date = Date.now() + 240 * 1000;
+  //   dispatch(startCooldown({ timer: date, type: "game" }));
+  // }, [dispatch]);
 
-  const { showAd, isPreparing, countdown } = useAdsgram({
-    blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
-    onReward,
-    onError: () => {},
-  });
+  // const { showAd, isPreparing, countdown } = useAdsgram({
+  //   blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
+  //   onReward,
+  //   onError: () => {},
+  // });
+
+  useEffect(() => {
+    console.log("IFRAME MOUNTED");
+    return () => console.log("IFRAME UNMOUNTED");
+  }, []);
 
   useEffect(() => {
     if (!cooldownGame) return;
@@ -107,7 +112,7 @@ export default function HomeGamesPage() {
     (platform !== Platform.TDESKTOP && !isLandscape);
 
   const startGame = (url: string, title: string, id: number) => {
-    if (secondsGameLeft <= 0) showAd();
+    // if (secondsGameLeft <= 0) showAd();
 
     dispatch(saveGame({ id, name: title, href: "/", url }));
     dispatch(saveActiveGame({ url }));
@@ -200,22 +205,58 @@ export default function HomeGamesPage() {
             Получить билет
           </ShowAdButton>
         </div>
+        {/* CONTEST GAME (COMING SOON) */}
+        <div className="relative rounded-2xl border border-white/10 bg-neutral-900/80 p-4 overflow-hidden group">
+          {/* subtle animated light */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-yellow-500/10 via-transparent to-purple-500/10" />
 
-        {/* GIVEAWAY */}
-        <div className="relative overflow-hidden rounded-[2rem] p-5 bg-neutral-900 border border-white/5">
-          <div className="absolute top-0 right-0 p-8 bg-yellow-500/5 rounded-full blur-3xl" />
+          {/* content */}
           <div className="relative z-10">
-            <div className="flex items-center gap-2 text-yellow-500 text-[10px] font-black uppercase tracking-widest mb-1">
-              <Gift size={12} /> Weekly Event
+            {/* header */}
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] uppercase tracking-widest text-yellow-500/70 font-bold">
+                Contest
+              </span>
+
+              <span className="text-[10px] font-semibold text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded-md animate-pulse">
+                Скоро старт
+              </span>
             </div>
-            <div className="text-xl font-black mb-1">Большой розыгрыш</div>
-            <div className="text-xs text-neutral-400">
-              Накапливай билеты, чтобы занять топ в рейтинге!
+
+            {/* title */}
+            <div className="mb-4">
+              <div className="text-base font-semibold text-white">
+                Конкурсная игра
+              </div>
+              <div className="text-xs text-neutral-400 mt-1">
+                Набирай очки и поднимайся в рейтинге
+              </div>
+            </div>
+
+            {/* buttons */}
+            <div className="flex items-center gap-2">
+              {/* START (disabled) */}
+              <button
+                disabled
+                className="flex-1 py-2 rounded-xl bg-yellow-500/20 text-yellow-500 text-xs font-bold cursor-not-allowed opacity-60"
+              >
+                Старт
+              </button>
+
+              {/* SOON */}
+              <div className="px-3 py-2 rounded-xl bg-white/5 text-xs font-semibold text-neutral-400">
+                SOON
+              </div>
+            </div>
+
+            {/* animated progress */}
+            <div className="mt-4 h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full w-1/3 bg-yellow-500/60 animate-[progressMove_2s_ease-in-out_infinite]" />
             </div>
           </div>
         </div>
 
-        <AdsInfoBanner isPreparing={isPreparing} countdown={countdown} />
+        {/* <AdsInfoBanner isPreparing={isPreparing} countdown={countdown} /> */}
 
         {/* MODERN CATEGORIES */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar py-2">
@@ -266,7 +307,7 @@ export default function HomeGamesPage() {
       {activeGame && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
           <div className="flex justify-between items-center">
-            {showBanner && (
+            {(platform !== Platform.TDESKTOP && isLandscape) || (
               <PlatformBackButton onclick={exitGame}>
                 {platform === Platform.TDESKTOP && (
                   <FullscreenButton
@@ -293,7 +334,7 @@ export default function HomeGamesPage() {
             href="/terms"
             className="px-3 py-1.5 rounded-xl bg-white/[0.03] text-[10px] font-bold text-neutral-500 hover:text-white transition-colors"
           >
-            ПРАВОВАЯ ИНФОРМАЦИЯ
+            ПРАВОВАЯ ИНФОРМАЦИЯ-
           </Link>
 
           <span className="text-neutral-800 text-[10px]">•</span>

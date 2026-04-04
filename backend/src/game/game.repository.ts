@@ -18,8 +18,16 @@ export class GameRepository implements IGameRepository {
       "GameModel"
     ) as ModelStatic<GameModel>;
   }
+
   public async create(body: GameDto): Promise<GameModel> {
-    return this._model.create(body);
+    console.log(body);
+    
+    const {categories, ...rest} = body
+    const game = await this._model.create(rest);
+
+    await game.setCategories(categories)
+    
+    return game
   }
 
   public async findOne(url: string): Promise<GameModel | null> {

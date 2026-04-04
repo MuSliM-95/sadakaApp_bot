@@ -22,7 +22,7 @@ export interface IGameAdd {
 
   description: string;
 
-  category: string;
-
   img: string;
+
+  categories: number[]
 }

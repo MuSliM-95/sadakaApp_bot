@@ -10,21 +10,18 @@ export const useTelegramWebApp = (fullscreen: boolean) => {
   useEffect(() => {
     const webApp: any = window.Telegram?.WebApp;
     if (!webApp) return;
-
-    const platform = webApp.platform;
-    dispatch(savePlatform(platform));
-
+  
+    dispatch(savePlatform(webApp.platform));
     webApp.ready();
-    webApp.expand();
-
+  
     setIsFullscreen(webApp.isFullscreen);
-
+  
     const handler = () => {
       setIsFullscreen(webApp.isFullscreen);
     };
-
+  
     webApp.onEvent("fullscreenChanged", handler);
-
+  
     return () => {
       webApp.offEvent("fullscreenChanged", handler);
     };

@@ -2,11 +2,13 @@ import { api } from "@/shared/api/instance.api";
 import { Game, IGameAdd } from "../types/types";
 
 class GameService {
-  async addGame(body: IGameAdd) {    
+  async addGame(body: IGameAdd) {  
+    console.log(body);
+      
     const response = await api.post<{ message: string }>("api/games/add", {
       ...body,
     });
-
+   
     return response;
   }
 

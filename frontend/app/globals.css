@@ -167,3 +167,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes shine {
+  0% { left: -40%; }
+  100% { left: 120%; }
+}
+
+@keyframes progressMove {
+  0% { transform: translateX(-20%); }
+  50% { transform: translateX(60%); }
+  100% { transform: translateX(-20%); }
+}
