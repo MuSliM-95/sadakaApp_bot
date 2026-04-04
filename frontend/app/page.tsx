@@ -87,11 +87,6 @@ export default function HomeGamesPage() {
   // });
 
   useEffect(() => {
-    console.log("IFRAME MOUNTED");
-    return () => console.log("IFRAME UNMOUNTED");
-  }, []);
-
-  useEffect(() => {
     if (!cooldownGame) return;
     const i = setInterval(() => dispatch(gameAdaTimerTick()), 1000);
     return () => clearInterval(i);
@@ -99,10 +94,16 @@ export default function HomeGamesPage() {
 
   // ORIENTATION
   useEffect(() => {
-    const check = () => setIsLandscape(window.innerWidth > window.innerHeight);
-    window.addEventListener("resize", check);
-    check();
-    return () => window.removeEventListener("resize", check);
+    const media = window.matchMedia("(orientation: landscape)");
+
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsLandscape(e.matches);
+    };
+
+    handler(media); // initial
+
+    media.addEventListener("change", handler);
+    return () => media.removeEventListener("change", handler);
   }, []);
 
   const { isFullscreen } = useTelegramWebApp(fullscreen);
@@ -307,7 +308,7 @@ export default function HomeGamesPage() {
       {activeGame && (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
           <div className="flex justify-between items-center">
-            {(platform !== Platform.TDESKTOP && isLandscape) || (
+            {!(platform !== Platform.TDESKTOP && isLandscape) && (
               <PlatformBackButton onclick={exitGame}>
                 {platform === Platform.TDESKTOP && (
                   <FullscreenButton
@@ -349,8 +350,8 @@ export default function HomeGamesPage() {
 
         {/* Нижняя строчка: версия и копирайт */}
         <div className="flex items-center gap-3 opacity-30">
-          <span className="text-[9px] font-mono tracking-widest uppercase">
-            WayGame v2.0
+          <span className="text-[9px] font-mono tracking-widest">
+            WayGames v2.0
           </span>
           <div className="w-[1px] h-2 bg-white/20" />
           <span className="text-[9px] font-medium uppercase tracking-tight">

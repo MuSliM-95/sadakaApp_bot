@@ -15,7 +15,7 @@ export default function AboutPage() {
         {/* ГЛАВНЫЙ ЗАГОЛОВОК (С КИРИЛЛИЦЕЙ) */}
         <header className="mb-14 border-l-2 border-yellow-500 pl-4">
           <h1 className="text-3xl font-bold tracking-tight mb-2">
-            WayGame(Наши игры)
+            WayGames(Наши игры)
           </h1>
           <p className="text-neutral-500 text-sm leading-relaxed">
             Официальная игровая платформа внутри мессенджера Telegram.
@@ -82,8 +82,8 @@ export default function AboutPage() {
         </main>
 
         <footer className="mt-20 opacity-20">
-          <div className="text-[9px] font-mono tracking-[0.3em] uppercase">
-            WayGame Service Engine
+          <div className="text-[9px] font-mono tracking-[0.3em]">
+            WayGames Service Engine
           </div>
         </footer>
       </div>
