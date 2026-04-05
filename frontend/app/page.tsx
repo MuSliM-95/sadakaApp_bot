@@ -24,6 +24,7 @@ import Link from "next/link";
 import { ShowAdButton } from "@/features/ads/ShowAdButton";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
 import { Category, Game } from "@/features/iframe-games/types/types";
+import PageLoader from "@/shared/components/ui/PageLoader";
 
 const fetchGames = async (): Promise<Game[]> => {
   const res = await api.get<Game[]>("api/games");
@@ -121,7 +122,7 @@ export default function HomeGamesPage() {
 
   const exitGame = () => dispatch(saveActiveGame({ url: null }));
 
-  if (isLoading) return <div className="p-4">Загрузка...</div>;
+  if (isLoading) return <PageLoader />;
   if (error) return <div className="p-4 text-red-500">Ошибка</div>;
 
   // categories
