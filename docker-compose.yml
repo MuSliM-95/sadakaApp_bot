@@ -43,6 +43,14 @@ services:
     networks:
       - dev
 
+  migrations: 
+    build: ./backend
+    command: npx sequelize-cli db:migrate
+    profiles: ["migrations"]
+    depends_on: 
+      - db
+        
+
   nginx:
     image: nginx:stable-alpine # используем стабильный легковесный Nginx образ
     container_name: nginx # имя контейнера на хосте, удобно для docker logs/exec
