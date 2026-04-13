@@ -43,10 +43,8 @@ export class GameController extends BaseController implements IGameController {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    console.log(1);
     const data = await this.gameService.addGame(req.body);
     
-
     res.json(data);
   }
 

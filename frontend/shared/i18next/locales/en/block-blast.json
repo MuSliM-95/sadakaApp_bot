@@ -1,0 +1,39 @@
+{
+  "game-name": "Block-Blast",
+  "rating": "Rating",
+  "play": "Play",
+  "back": "Back",
+
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Weekly Top Players",
+    "reset": "Reset Leaderboard",
+    "noScores": "No scores yet!",
+    "close": "Close",
+    "points": "Points",
+    "player": "Player"
+  },
+  "settings": {
+    "title": "Settings",
+    "sound": "Sound Effects",
+    "menu": "Main Menu",
+    "continue": "Continue"
+  },
+  "onboarding": {
+    "welcomeTitle": "Welcome!",
+    "welcomeText": "Block Blast is a puzzle game where your goal is to score as many points as possible by placing blocks on the grid.",
+
+    "dragTitle": "Drag Blocks",
+    "dragText": "Drag shapes from the tray at the bottom and drop them onto the 8x8 grid. You can place them anywhere they fit!",
+
+    "clearTitle": "Clear Lines",
+    "clearText": "Fill an entire row or column to clear it. Clearing multiple lines at once gives you a huge score bonus!",
+
+    "strategyTitle": "Strategy",
+    "strategyText": "The game ends when you can't fit any more blocks. Plan ahead and keep the grid clear to survive!",
+
+    "back": "Back",
+    "next": "Next",
+    "done": "Got it!"
+  }
+}

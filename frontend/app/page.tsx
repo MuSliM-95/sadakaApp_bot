@@ -221,7 +221,7 @@ export default function HomeGamesPage() {
               </span>
 
               <span className="text-[10px] font-semibold text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded-md animate-pulse">
-                Скоро старт
+                Тестирование
               </span>
             </div>
 
@@ -238,12 +238,12 @@ export default function HomeGamesPage() {
             {/* buttons */}
             <div className="flex items-center gap-2">
               {/* START (disabled) */}
-              <button
-                disabled
-                className="flex-1 py-2 rounded-xl bg-yellow-500/20 text-yellow-500 text-xs font-bold cursor-not-allowed opacity-60"
+              <Link
+                href={"/games"}
+                className="flex-1 py-2 text-center rounded-xl bg-yellow-500/20 text-yellow-500 text-xs font-bold"
               >
                 Старт
-              </button>
+              </Link>
 
               {/* SOON */}
               <div className="px-3 py-2 rounded-xl bg-white/5 text-xs font-semibold text-neutral-400">

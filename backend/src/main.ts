@@ -25,6 +25,7 @@ import { authBindings } from "./auth/main.js";
 import { winnerBindings } from "./winner/main.js";
 import { gameBindings } from "./game/main.js";
 import { categoryBindings } from "./category/main.js";
+import { pointsBindings } from "./point/main.js";
 
 const appBindings = new ContainerModule(
   (options: ContainerModuleLoadOptions) => {
@@ -61,7 +62,8 @@ async function bootstrap(): Promise<IBootstrapReturn> {
     winnerBindings,
     userBindings,
     gameBindings,
-    categoryBindings
+    categoryBindings,
+    pointsBindings
   );
 
   const app = container.get<App>(TYPES.Application);

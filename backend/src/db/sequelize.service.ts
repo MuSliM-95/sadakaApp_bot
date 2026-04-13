@@ -34,7 +34,7 @@ export class SequelizeService implements ISequelizeService {
   public async connect(): Promise<void> {
     try {
       await this.postgres.authenticate();
-      await this.postgres.sync({ force: false });
+      // await this.postgres.sync({ force: false });
       this.logger.log("[SequelizeService]. Успешно подключились к базе данных");
     } catch (error) {
       if (error instanceof Error) {

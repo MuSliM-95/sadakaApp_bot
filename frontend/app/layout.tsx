@@ -10,6 +10,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { Toaster } from "sonner";
+import '@/shared/i18next/i18n';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
