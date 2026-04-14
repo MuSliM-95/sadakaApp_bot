@@ -41,7 +41,7 @@ services:
 
   migrations:
     build: ./backend
-    working_dir: /app
+    # working_dir: /app
     command: npx sequelize-cli db:migrate
     profiles: ["migrations"]
     env_file:

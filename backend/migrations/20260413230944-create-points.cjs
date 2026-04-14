@@ -18,7 +18,7 @@ module.exports = {
         unique: true,
         allowNull: false,
         references: {
-          model: "Users", // ⚠️ имя таблицы User (проверь!)
+          model: "users", // ⚠️ имя таблицы User (проверь!)
           key: "id",
         },
       },
