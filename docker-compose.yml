@@ -15,9 +15,6 @@ services:
     container_name: express
     build: ./backend
     restart: always
-    volumes:
-      - ./backend/stats.json:/app/stats.json
-
     env_file:
       - ./.env
     depends_on:
@@ -44,6 +41,7 @@ services:
 
   migrations:
     build: ./backend
+    working_dir: /app
     command: npx sequelize-cli db:migrate
     profiles: ["migrations"]
     env_file:
