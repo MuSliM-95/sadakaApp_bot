@@ -4,13 +4,15 @@ import type { IPointsRepository } from "./interfaces/points.repository.interface
 import { Points } from "./model/point.js";
 import type { ISequelizeService } from "../db/sequelize.interface.js";
 import { Op, type ModelStatic, QueryTypes } from "sequelize";
+import type { RedisConfig } from "../configs/redis.config.js";
 
 @injectable()
 export class PointsRepository implements IPointsRepository {
   private _model: ModelStatic<Points>;
   constructor(
     @inject(TYPES.SequelizeService)
-    private readonly sequelize: ISequelizeService
+    private readonly sequelize: ISequelizeService,
+    @inject(TYPES.RedisConfig) private readonly redis: RedisConfig
   ) {
     this._model = this.sequelize.postgres.modelManager.getModel(
       "Points"
@@ -50,5 +52,12 @@ export class PointsRepository implements IPointsRepository {
   }
   public async findByPk(pointsId: number): Promise<Points | null> {
     return this._model.findByPk(pointsId);
+  }
+
+  public async saveGameSession(sessionId: string, sessionData: string): Promise<string> {    
+    return this.redis.client.set(sessionId, sessionData);
+  }
+  public async findGameSession(sessionId: string): Promise<string | null> {    
+    return this.redis.client.get(sessionId);
   }
 }

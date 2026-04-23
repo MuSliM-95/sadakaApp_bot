@@ -1,24 +1,29 @@
 import { api } from "@/shared/api/instance.api";
-import { IPoints } from "../types/points.types";
+import { GameSessionType, IPoints, SubmitGameRequest } from "../types/points.types";
 
 class PointsService {
   public async getPointsAll() {
-    const response = await api.get<IPoints[]>("api/points/all");
-    console.log(response);
+    const response = await api.get<IPoints[]>("api/game/points/all");
     return response;
   }
   public async getPoints() {
-    const response = await api.get<IPoints>("api/points");
+    const response = await api.get<IPoints>("api/game/points");
     return response;
   }
-  public async addPoints(score: number) {
-    
-    const response = await api.post<IPoints | undefined>("api/points/create", {
-      score,
-    });
-    console.log("response", response);
-  
-    
+
+  public async gameFinish(data: SubmitGameRequest) {
+    const response = await api.post<IPoints | undefined>(
+      "api/game/finish",
+      {
+        ...data,
+      }
+    );
+
+    return response;
+  }
+
+  public async gameSession() {
+    const response = await api.post<GameSessionType>("api/game/start");   
     return response;
   }
 }

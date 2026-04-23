@@ -1,16 +1,28 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Leaderboard } from "@/features/block-blast/ui/Leaderboard";
 import { GameOver } from "@/features/block-blast/ui/GameOver";
 import { RenderMenu } from "@/features/block-blast/ui/RenderMenu";
-import { Shape } from "@/features/block-blast/types/points.types";
+import { Move, Shape } from "@/features/block-blast/types/points.types";
 import { RenderGame } from "@/features/block-blast/ui/RenderGame";
 import { Settings } from "@/features/block-blast/ui/Settings";
 import { Onboarding } from "@/features/block-blast/ui/Onboarding";
 import { Toast } from "@/features/block-blast/ui/Toast";
 import { usePointsMutation } from "../hooks/usePointsMutation";
+import { SHAPES } from "../utils/gameEngine";
+import { useGameSessionMutation } from "../hooks/useGameSessionMutation";
+import { useAdsgram } from "@/features/ads/useAdsgram";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { gameAdaTimerTick, startCooldown } from "@/store/ad.slice";
+import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
 
 const tg = (window as any).Telegram?.WebApp;
 
@@ -105,200 +117,6 @@ const XP_PER_BLOCK = 10;
 const XP_PER_LINE = 100;
 const COMBO_MULTIPLIER = 1.5;
 
-/**
- * All possible block shapes in the game.
- * 1 represents a block, 0 represents empty space.
- * Each matrix defines the layout of the shape.
- */
-const SHAPES: Shape[] = [
-  { id: "1x1", matrix: [[1]], color: "bg-[#ffcc00]" }, // Single dot
-  { id: "1x2", matrix: [[1, 1]], color: "bg-[#ffcc00]" }, // Horizontal 2-block
-  { id: "1x3", matrix: [[1, 1, 1]], color: "bg-[#ffcc00]" }, // Horizontal 3-block
-  { id: "1x4", matrix: [[1, 1, 1, 1]], color: "bg-[#ffcc00]" }, // Horizontal 4-block
-  {
-    id: "2x2",
-    matrix: [
-      [1, 1],
-      [1, 1],
-    ],
-    color: "bg-[#9933cc]",
-  }, // Square
-  {
-    id: "3x3",
-    matrix: [
-      [1, 1, 1],
-      [1, 1, 1],
-      [1, 1, 1],
-    ],
-    color: "bg-[#cc2222]",
-  }, // Large Square
-  {
-    id: "L",
-    matrix: [
-      [1, 0],
-      [1, 0],
-      [1, 1],
-    ],
-    color: "bg-[#ff8c00]",
-  }, // L shape
-  {
-    id: "L-rev",
-    matrix: [
-      [0, 1],
-      [0, 1],
-      [1, 1],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // Reverse L shape
-  {
-    id: "T",
-    matrix: [
-      [1, 1, 1],
-      [0, 1, 0],
-    ],
-    color: "bg-[#33cc33]",
-  }, // T shape
-  {
-    id: "Z",
-    matrix: [
-      [1, 1, 0],
-      [0, 1, 1],
-    ],
-    color: "bg-[#cc2222]",
-  }, // Z shape
-  {
-    id: "S",
-    matrix: [
-      [0, 1, 1],
-      [1, 1, 0],
-    ],
-    color: "bg-[#33cc33]",
-  }, // S shape
-  {
-    id: "3x3-corner",
-    matrix: [
-      [1, 1, 1],
-      [1, 0, 0],
-      [1, 0, 0],
-    ],
-    color: "bg-[#ffcc00]",
-  }, // Corner shape (5 blocks) - Top Left
-  {
-    id: "3x3-corner-2",
-    matrix: [
-      [1, 1, 1],
-      [0, 0, 1],
-      [0, 0, 1],
-    ],
-    color: "bg-[#ffcc00]",
-  }, // Corner shape (5 blocks) - Top Right
-  {
-    id: "3x3-corner-3",
-    matrix: [
-      [1, 0, 0],
-      [1, 0, 0],
-      [1, 1, 1],
-    ],
-    color: "bg-[#ffcc00]",
-  }, // Corner shape (5 blocks) - Bottom Left
-  {
-    id: "3x3-corner-4",
-    matrix: [
-      [0, 0, 1],
-      [0, 0, 1],
-      [1, 1, 1],
-    ],
-    color: "bg-[#ffcc00]",
-  }, // Corner shape (5 blocks) - Bottom Right
-  {
-    id: "corner-2x2-1",
-    matrix: [
-      [1, 1],
-      [1, 0],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // 2x2 Corner (3 blocks) - Top Left
-  {
-    id: "corner-2x2-2",
-    matrix: [
-      [1, 1],
-      [0, 1],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // 2x2 Corner (3 blocks) - Top Right
-  {
-    id: "corner-2x2-3",
-    matrix: [
-      [1, 0],
-      [1, 1],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // 2x2 Corner (3 blocks) - Bottom Left
-  {
-    id: "corner-2x2-4",
-    matrix: [
-      [0, 1],
-      [1, 1],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // 2x2 Corner (3 blocks) - Bottom Right
-  {
-    id: "3x2",
-    matrix: [
-      [1, 1, 1],
-      [1, 1, 1],
-    ],
-    color: "bg-[#cc2222]",
-  }, // 3x2 rectangle
-  {
-    id: "4x2",
-    matrix: [
-      [1, 1, 1, 1],
-      [1, 1, 1, 1],
-    ],
-    color: "bg-[#ffcc00]",
-  }, // 4x2 rectangle
-  { id: "2x1", matrix: [[1], [1]], color: "bg-[#33cc33]" }, // Vertical 2-block
-  { id: "3x1", matrix: [[1], [1], [1]], color: "bg-[#33cc33]" }, // Vertical 3-block
-  { id: "4x1", matrix: [[1], [1], [1], [1]], color: "bg-[#33cc33]" }, // Vertical 4-block
-  { id: "1x5", matrix: [[1, 1, 1, 1, 1]], color: "bg-[#ffcc00]" }, // Horizontal 5-block
-  { id: "5x1", matrix: [[1], [1], [1], [1], [1]], color: "bg-[#33cc33]" }, // Vertical 5-block
-  {
-    id: "side-t-left",
-    matrix: [
-      [1, 0],
-      [1, 1],
-      [1, 0],
-    ],
-    color: "bg-[#9933cc]",
-  }, // Side T shape Left
-  {
-    id: "side-t-right",
-    matrix: [
-      [0, 1],
-      [1, 1],
-      [0, 1],
-    ],
-    color: "bg-[#9933cc]",
-  }, // Side T shape Right
-  {
-    id: "diag-left",
-    matrix: [
-      [1, 0],
-      [0, 1],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // Diagonal 2-block Left
-  {
-    id: "diag-right",
-    matrix: [
-      [0, 1],
-      [1, 0],
-    ],
-    color: "bg-[#00d2ff]",
-  }, // Diagonal 2-block Right
-];
-
 // --- SHAPE GENERATION LOGIC ---
 /**
  * A "Bag" system for shape generation.
@@ -308,14 +126,23 @@ const SHAPES: Shape[] = [
  */
 let shapeBag: Shape[] = [];
 
+function createSeededRandom(seed: number) {
+  let s = seed;
+
+  return function () {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+
 /**
  * Refills and shuffles the shape bag.
  */
-const refillBag = () => {
+const refillBag = (rng: () => number) => {
   // Create a copy of all shapes and shuffle them using Fisher-Yates algorithm
   const newBag = [...SHAPES];
   for (let i = newBag.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(rng() * (i + 1));
     [newBag[i], newBag[j]] = [newBag[j], newBag[i]];
   }
   shapeBag = newBag;
@@ -326,13 +153,17 @@ const refillBag = () => {
  * @param count - Number of shapes to generate (usually 3).
  * @param level - Current game level (can be used for difficulty scaling).
  */
-const getRandomShapes = (count: number, level: number): Shape[] => {
+const getRandomShapes = (
+  count: number,
+  level: number,
+  rng: () => number
+): Shape[] => {
   const result: Shape[] = [];
 
   for (let i = 0; i < count; i++) {
     // If bag is empty, refill it
     if (shapeBag.length === 0) {
-      refillBag();
+      refillBag(rng);
     }
 
     // Take the next shape from the bag
@@ -342,13 +173,19 @@ const getRandomShapes = (count: number, level: number): Shape[] => {
     const uniqueId = `${shape.id}-${Date.now()}-${Math.random()
       .toString(36)
       .substr(2, 9)}-${i}`;
-    result.push({ ...shape, id: uniqueId });
+    result.push({ ...shape, id: uniqueId, typeId: shape.id });
   }
 
   return result;
 };
 
 export default function BlockBlast() {
+  const rngRef = useRef<() => number>(() => Math.random());
+  const movesRef = useRef<Move[]>([]);
+
+  const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
+
+  const dispatch = useAppDispatch();
   // --- STATE ---
   const [grid, setGrid] = useState<string[][]>(
     Array(GRID_SIZE)
@@ -390,21 +227,49 @@ export default function BlockBlast() {
     type: "success" | "info" | "error";
   } | null>(null);
 
+  const onReward = useCallback(() => {
+    const date = Date.now() + 10 * 60 * 1000;
+    dispatch(startCooldown({ timer: date, type: "game" }));
+  }, [dispatch]);
+
+  const onError = useCallback(() => {
+    // setAds(false);
+  }, []);
+
+  const { showAd, isPreparing, countdown } = useAdsgram({
+    blockId: process.env.NEXT_PUBLIC_BLOCK_ID!,
+    onReward,
+    onError,
+  });
+
+  useEffect(() => {
+    showAd?.();
+  }, []);
+
   const gridRef = useRef<HTMLDivElement>(null);
   const dragContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data, mutate: addPoints } = usePointsMutation();
+  const { data, mutate: finishGame } = usePointsMutation();
+  const { data: sessionData, mutate: createGameSession } =
+    useGameSessionMutation();
+
+  useEffect(() => {
+    if (!sessionData) return;
+    rngRef.current = createSeededRandom(sessionData?.seed!);
+    // setAvailableShapes(getRandomShapes(3, 1, rng))
+  }, [sessionData]);
 
   /**
    * Resets the game state to start a new session.
    */
   const restartGame = () => {
+    createGameSession();
     setGrid(
       Array(GRID_SIZE)
         .fill(null)
         .map(() => Array(GRID_SIZE).fill(""))
     );
-    setAvailableShapes(getRandomShapes(3, 1));
+    setAvailableShapes(getRandomShapes(3, 1, rngRef.current));
     setScore(0);
     setGameOver(false);
     setCombo(0);
@@ -412,6 +277,7 @@ export default function BlockBlast() {
     setLevel(1);
     setRefreshCount(3);
     setMaxCombo(0);
+    movesRef.current = [];
     haptic.notification("success");
   };
 
@@ -442,7 +308,7 @@ export default function BlockBlast() {
       setShowOnboarding(true);
     }
 
-    setAvailableShapes(getRandomShapes(3, 1));
+    setAvailableShapes(getRandomShapes(3, 1, rngRef.current));
   }, []);
 
   /**
@@ -529,6 +395,14 @@ export default function BlockBlast() {
    * @param startC - The column index where the shape is dropped.
    */
   const placeShape = (shape: Shape, startR: number, startC: number) => {
+    // ✅ ДОБАВЛЯЕМ MOVE ТУТ (ОДИН РАЗ)
+    const newMove = {
+      shapeId: shape.typeId!,
+      position: { r: startR, c: startC },
+    };
+
+    // ✅ сразу в ref (НЕ асинхронно)
+    movesRef.current.push(newMove);
     const newGrid = grid.map((row) => [...row]);
     let blocksPlaced = 0;
 
@@ -632,7 +506,7 @@ export default function BlockBlast() {
     // 5. Refill the shapes tray if all 3 shapes have been used
     const remainingShapes = availableShapes.filter((s) => s.id !== shape.id);
     if (remainingShapes.length === 0) {
-      const nextShapes = getRandomShapes(3, level);
+      const nextShapes = getRandomShapes(3, level, rngRef.current);
       setAvailableShapes(nextShapes);
       // Check if the new set of shapes can be placed; if not, game over.
       if (checkGameOver(nextShapes, newGrid))
@@ -654,10 +528,17 @@ export default function BlockBlast() {
 
     if (finalScore > highScore) {
       setHighScore(finalScore);
-      localStorage.setItem("blockBlast_highScore", finalScore.toString());
+      // localStorage.setItem("blockBlast_highScore", finalScore.toString());
     }
     // Тут реализуй окончание игры, а именно отправки результата игры
-    addPoints(finalScore);
+
+    if (sessionData?.sessionId) {
+      finishGame({
+        sessionId: sessionData.sessionId!,
+        clientScore: finalScore,
+        moves: movesRef.current,
+      });
+    }
   };
 
   /**
@@ -726,9 +607,12 @@ export default function BlockBlast() {
       onMouseMove={handleDragMove}
       onMouseUp={handleDragEnd}
     >
+   
       {isMenu ? (
         <RenderMenu
           setIsMenu={setIsMenu}
+          countdown={countdown}
+          isPreparing={isPreparing}
           restartGame={restartGame}
           setShowLeaderboard={setShowLeaderboard}
           setShowOnboarding={setShowOnboarding}
@@ -765,6 +649,7 @@ export default function BlockBlast() {
           draggedShape={draggedShape}
           grid={grid}
           isShaking={isShaking}
+          rng={rngRef.current}
         />
       )}
 

@@ -10,7 +10,10 @@ export type Shape = {
   id: string;
   matrix: number[][];
   color: string;
+  typeId?: string;
 };
+
+export type ShapeResult = Omit<Shape, 'typeId'>
 
 export type Haptic = {
   impact: (style?: "light" | "medium" | "heavy" | "rigid" | "soft") => void;
@@ -43,3 +46,17 @@ export type TToast = {
   message: string;
   type: "success" | "info" | "error";
 } | null;
+
+
+export type GameSessionType = { sessionId: string; seed: number };
+
+export type Move = {
+  shapeId: string;
+  position: { r: number; c: number };
+};
+
+export type SubmitGameRequest = {
+  sessionId: string;
+  clientScore: number;
+  moves: Move[];
+};

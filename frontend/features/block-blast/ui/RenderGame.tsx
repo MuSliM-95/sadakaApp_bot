@@ -34,7 +34,7 @@ interface Props {
   soundEnabled: boolean;
   refreshCount: number;
   setAvailableShapes: (value: React.SetStateAction<Shape[]>) => void;
-  getRandomShapes: (count: number, level: number) => Shape[];
+  getRandomShapes: (count: number, level: number, rng: () => number) => Shape[]
   setRefreshCount: (value: React.SetStateAction<number>) => void;
   setShowSettings: (value: React.SetStateAction<boolean>) => void;
   setPoints: React.Dispatch<React.SetStateAction<number>>;
@@ -49,6 +49,7 @@ interface Props {
   canPlaceShape: CanPlaceShape;
   combo: number;
   availableShapes: AvailableShapes;
+  rng: () => number;
 }
 
 export const RenderGame: React.FC<Props> = ({
@@ -82,6 +83,7 @@ export const RenderGame: React.FC<Props> = ({
   canPlaceShape,
   combo,
   availableShapes,
+  rng
 }) => {
   const [cellSize, setCellSize] = useState(45);
 
@@ -89,7 +91,7 @@ export const RenderGame: React.FC<Props> = ({
 
   const onReward = useCallback(() => {
     setRefreshCount((prev) => prev - 1);
-    setAvailableShapes(getRandomShapes(3, level));
+    setAvailableShapes(getRandomShapes(3, level, rng));
   }, [level]);
 
   const onError = useCallback(() => {}, [platform, level]);
@@ -137,9 +139,9 @@ export const RenderGame: React.FC<Props> = ({
       showAd();
       if (Platform.TDESKTOP === platform) {
         setRefreshCount((prev) => prev - 1);
-        setAvailableShapes(getRandomShapes(3, level));
+        setAvailableShapes(getRandomShapes(3, level, rng));
       }
-      // haptic.impact("medium");
+      haptic.impact("medium");
     }
   };
 

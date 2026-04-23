@@ -67,7 +67,6 @@ export class FetchClient {
 
     if (!response.ok) {
       const error = (await response.json()) as { err: string } | undefined;
-      console.log(error);
       
       throw new FetchError(response.status, error?.err || response.statusText);
     }

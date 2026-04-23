@@ -4,6 +4,11 @@ import { motion } from "motion/react";
 import { Crown, Gamepad2, Play, ArrowBigLeftDash } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
+import { useGameSessionMutation } from "../hooks/useGameSessionMutation";
+import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+import { cn } from "@/lib/utils";
+import { Platform } from "@/shared/types/global.types";
+import { useAppSelector } from "@/store/hooks";
 
 interface Props {
   className?: string;
@@ -12,6 +17,8 @@ interface Props {
   setShowLeaderboard: React.Dispatch<React.SetStateAction<boolean>>;
   setOnboardingStep: (value: React.SetStateAction<number>) => void;
   setShowOnboarding: (value: React.SetStateAction<boolean>) => void;
+  isPreparing: boolean;
+  countdown: number;
 }
 
 export const RenderMenu: React.FC<Props> = ({
@@ -21,10 +28,15 @@ export const RenderMenu: React.FC<Props> = ({
   setShowLeaderboard,
   setOnboardingStep,
   setShowOnboarding,
+  isPreparing,
+  countdown,
 }) => {
   const { t } = useTranslation("block_blast");
+  const platform = useAppSelector((state) => state.ad.platform);
+
   return (
     <div className="flex flex-col min-h-screen w-full max-w-md mx-auto select-none overflow-hidden bg-[#3252a8] items-center justify-center p-8">
+      <AdsInfoBanner isPreparing={isPreparing} countdown={countdown} />
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -73,7 +85,10 @@ export const RenderMenu: React.FC<Props> = ({
               setOnboardingStep(0);
               setShowOnboarding(true);
             }}
-            className="fixed top-2 right-2 cursor-pointer text-white"
+            className={cn(
+              "fixed top-2 right-2 cursor-pointer text-white",
+              Platform.TDESKTOP !== platform && 'top-10'
+            )}
           >
             {/* Gamepad2 icon - moved slightly right and made more prominent with thicker stroke as requested */}
             <Gamepad2

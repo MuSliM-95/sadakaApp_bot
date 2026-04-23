@@ -40,7 +40,7 @@ export default function HomeGamesPage() {
   const fullscreen = useAppSelector((state) => state.ad.fullscreen);
   const platform = useAppSelector((state) => state.ad.platform);
   // const secondsGameLeft = useAppSelector((state) => state.ad.secondsGameLeft);
-  const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
+  // const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
   const activeGame = useAppSelector((state) => state.game.activeGame);
 
   const { data: user } = useUserQuery();
@@ -87,11 +87,11 @@ export default function HomeGamesPage() {
   //   onError: () => {},
   // });
 
-  useEffect(() => {
-    if (!cooldownGame) return;
-    const i = setInterval(() => dispatch(gameAdaTimerTick()), 1000);
-    return () => clearInterval(i);
-  }, [cooldownGame]);
+  // useEffect(() => {
+  //   if (!cooldownGame) return;
+  //   const i = setInterval(() => dispatch(gameAdaTimerTick()), 1000);
+  //   return () => clearInterval(i);
+  // }, [cooldownGame]);
 
   // ORIENTATION
   useEffect(() => {
@@ -108,6 +108,7 @@ export default function HomeGamesPage() {
   }, []);
 
   const { isFullscreen } = useTelegramWebApp(fullscreen);
+
 
   const showBanner =
     (platform === Platform.TDESKTOP && !fullscreen) ||
@@ -137,6 +138,7 @@ export default function HomeGamesPage() {
   const filteredGames = activeCategory
     ? games?.filter((g) => g.categories.some((c) => c.slug === activeCategory))
     : games;
+    
 
   return (
     <div className="min-h-screen bg-black text-white pb-12 px-3 pt-4">
@@ -321,7 +323,7 @@ export default function HomeGamesPage() {
             )}
           </div>
           <iframe
-            src={activeGame}
+            src={`${activeGame}?clid=${process.env.CLID}`}
             className="flex-1 w-full"
             sandbox="allow-scripts allow-same-origin"
           />

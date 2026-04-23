@@ -9,7 +9,7 @@ import { AuthGuard } from "../common/guard/auth.guard.js";
 import type { IPointsController } from "./interfaces/points.controller.interface.js";
 import type { IPointsService } from "./interfaces/points.service.interface.js";
 import { ValidateMiddleware } from "../common/validate.midleware.js";
-import { PintsDto } from "./dto/points.dto.js";
+import { GameFinishDto } from "./dto/points.dto.js";
 
 @injectable()
 export class PointsController
@@ -24,13 +24,13 @@ export class PointsController
     this.bindRoutes([
       {
         method: "get",
-        path: "/points",
+        path: "/game/points",
         middlewares: [new AuthGuard()],
         func: this.getPoints,
       },
       {
         method: "get",
-        path: "/points/all",
+        path: "/game/points/all",
         middlewares: [new AuthGuard()],
         func: this.findPointsAll,
       },
@@ -42,9 +42,15 @@ export class PointsController
       // },
       {
         method: "post",
-        path: "/points/create",
-        middlewares: [new AuthGuard(), new ValidateMiddleware(PintsDto)],
-        func: this.addPoints,
+        path: "/game/finish",
+        middlewares: [new AuthGuard(), new ValidateMiddleware(GameFinishDto)],
+        func: this.gameFinish,
+      },
+      {
+        method: "post",
+        path: "/game/start",
+        middlewares: [new AuthGuard()],
+        func: this.gameSession,
       },
     ]);
   }
@@ -59,18 +65,23 @@ export class PointsController
 
     res.json(data);
   }
-  public async addPoints(
+  public async gameFinish(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     const { id } = req.user!;
-    const { score } = req.body;
-    const result = await this.pointsService.addPoints(id, score);
+    const { sessionId, moves, clientScore } = req.body;
+    const result = await this.pointsService.gameFinish(
+      sessionId,
+      id,
+      moves,
+      clientScore
+    );
 
-    if(!result) {
-       res.status(204).send()
-       return
+    if (!result) {
+      res.status(204).send();
+      return;
     }
 
     res.status(200).json(result);
@@ -83,5 +94,15 @@ export class PointsController
     const data = await this.pointsService.getAllPoints();
 
     res.json(data);
+  }
+
+  public async gameSession(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const sessionData = await this.pointsService.gameSession(req.user?.id!);
+
+    res.status(200).json(sessionData);
   }
 }

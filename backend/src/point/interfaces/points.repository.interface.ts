@@ -6,4 +6,6 @@ export interface IPointsRepository {
   findByPk(pointsId: number): Promise<Points | null>;
   addPoints(userId: number, score: number): Promise<Points[]>;
   findAll(): Promise<Points[]>;
+  saveGameSession(sessionId: string, sessionData: string): Promise<string>;
+  findGameSession(sessionId: string): Promise<string | null>;
 }

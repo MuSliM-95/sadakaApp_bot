@@ -19,9 +19,7 @@ export class GameRepository implements IGameRepository {
     ) as ModelStatic<GameModel>;
   }
 
-  public async create(body: GameDto): Promise<GameModel> {
-    console.log(body);
-    
+  public async create(body: GameDto): Promise<GameModel> {    
     const {categories, ...rest} = body
     const game = await this._model.create(rest);
 

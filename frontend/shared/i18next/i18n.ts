@@ -9,8 +9,8 @@ i18n.use(initReactI18next).init({
     en: { block_blast: en },
     ru: { block_blast: ru },
   },
-  lng: "en", // дефолт
-  fallbackLng: "en",
+  lng: "ru", // дефолт
+  fallbackLng: "ru",
   interpolation: {
     escapeValue: false,
   },

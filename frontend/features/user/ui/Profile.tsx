@@ -41,7 +41,6 @@ export function Profile() {
     webApp.expand();
   }, []);
 
-  console.log(data);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white px-4 pb-8">

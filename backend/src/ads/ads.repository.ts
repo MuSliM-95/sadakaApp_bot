@@ -49,9 +49,7 @@ export class AdsRepository implements IAdsRepository {
     return this.redis.client.get(userId);
   }
 
-  public async getDelRedisToken(userId: string): Promise<string | null> {
-    console.log(userId);
-    
+  public async getDelRedisToken(userId: string): Promise<string | null> {    
     return this.redis.client.getdel(userId);
   }
 
