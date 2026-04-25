@@ -7,7 +7,7 @@ services:
         NEXT_PUBLIC_BLOCK_ID: ${NEXT_PUBLIC_BLOCK_ID}
         NEXT_PUBLIC_BLOCK_ID_INIT: ${NEXT_PUBLIC_BLOCK_ID_INIT}
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
-        CLID: ${CLID}
+        NEXT_PUBLIC_CLID: ${NEXT_PUBLIC_CLID}
     restart: always
     networks:
       - dev
