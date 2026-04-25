@@ -23,6 +23,8 @@ import { useAdsgram } from "@/features/ads/useAdsgram";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { gameAdaTimerTick, startCooldown } from "@/store/ad.slice";
 import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+import { usePointsQuery } from "../hooks/usePointsQuery";
+import { useUserQuery } from "@/features/user/hooks/useUserQuery";
 
 const tg = (window as any).Telegram?.WebApp;
 
@@ -182,8 +184,12 @@ const getRandomShapes = (
 export default function BlockBlast() {
   const rngRef = useRef<() => number>(() => Math.random());
   const movesRef = useRef<Move[]>([]);
+  const user = useAppSelector((state) => state.ad.user);
 
-  const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
+  const { data: profile } = useUserQuery({ enabled: !user });
+  const userId = user?.id ?? profile?.id;
+
+  const { data: pointsData } = usePointsQuery(userId);
 
   const dispatch = useAppDispatch();
   // --- STATE ---
@@ -282,8 +288,15 @@ export default function BlockBlast() {
   };
 
   useEffect(() => {
+    if (!pointsData) return;
+    setPoints(pointsData.score);
+  }, [pointsData]);
+
+
+  useEffect(() => {
     if (!data) return;
     setPoints(data.score);
+    // console.log(data);
   }, [data]);
 
   // --- EFFECTS ---
@@ -607,7 +620,6 @@ export default function BlockBlast() {
       onMouseMove={handleDragMove}
       onMouseUp={handleDragEnd}
     >
-   
       {isMenu ? (
         <RenderMenu
           setIsMenu={setIsMenu}

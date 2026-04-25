@@ -17,6 +17,7 @@ import { useAdsgram } from "@/features/ads/useAdsgram";
 import { Platform } from "@/shared/types/global.types";
 import { useAppSelector } from "@/store/hooks";
 import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+import { toast } from "sonner";
 
 interface Props {
   className?: string;
@@ -89,11 +90,13 @@ export const RenderGame: React.FC<Props> = ({
 
   const platform = useAppSelector((state) => state.ad.platform);
 
+
+
   const onReward = useCallback(() => {
     setRefreshCount((prev) => prev - 1);
     setAvailableShapes(getRandomShapes(3, level, rng));
   }, [level]);
-
+  
   const onError = useCallback(() => {}, [platform, level]);
 
   const { showAd, isPreparing, countdown } = useAdsgram({
@@ -103,16 +106,16 @@ export const RenderGame: React.FC<Props> = ({
   });
   /**
    * Triggered when user starts dragging a shape from the tray.
-   */
-  const handleDragStart = (
-    shape: Shape,
-    e: React.TouchEvent | React.MouseEvent
-  ) => {
+  */
+ const handleDragStart = (
+   shape: Shape,
+   e: React.TouchEvent | React.MouseEvent
+   ) => {
     if (gameOver) return;
 
     setDraggedShape(shape);
     const pos = "touches" in e ? e.touches[0] : e;
-
+    
     if (gridRef.current) {
       const rect = gridRef.current.getBoundingClientRect();
       // Calculate cell size dynamically based on grid width to ensure perfect alignment
@@ -145,11 +148,6 @@ export const RenderGame: React.FC<Props> = ({
     }
   };
 
-  const { data } = usePointsQuery();
-
-  useEffect(() => {
-    if (data) setPoints(data.score);
-  }, [data]);
 
   return (
     <div className="flex bg-black flex-col justify-center min-h-screen w-full max-w-md mx-auto select-none overflow-hidden">

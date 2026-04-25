@@ -1,250 +1,221 @@
 "use client";
 
-import { useMemo } from "react";
-import { Trophy, Ticket, Megaphone, Crown, RotateCcw } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  Trophy,
+  Ticket,
+  Megaphone,
+  Crown,
+  RotateCcw,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { useUsersQuery } from "../hooks/useUsersQuery";
 import { useUserQuery } from "../hooks/useUserQuery";
-import { BackButton } from "@/features/ui/BackButton";
 import { Button } from "@/shared/components/ui/button";
 import { useAppSelector } from "@/store/hooks";
 import { cn } from "@/lib/utils";
-import { Platform } from "@/shared/types/global.types";
 import PageLoader from "@/shared/components/ui/PageLoader";
 import { useWinnersQuery } from "../hooks/useWinnersQuery";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
+import { usePointsAllQuery } from "@/features/block-blast/hooks/usePointsAllQuery";
+import { useTranslation } from "react-i18next";
 
 export function Rating() {
-  const userSate = useAppSelector((state) => state.ad.user);
-  const platform = useAppSelector((state) => state.ad.platform);
-  const fullscreen = useAppSelector((state) => state.ad.fullscreen);
+  const { t } = useTranslation('rating');
+
+  const [mode, setMode] = useState<"global" | "game">("global");
+
+  const userState = useAppSelector((state) => state.ad.user);
+
   const { data: users = [], isLoading, refetch } = useUsersQuery();
+  const { data: game = [], isLoading: gameLoading } = usePointsAllQuery();
   const { data: winners } = useWinnersQuery();
 
   const { data: user } = useUserQuery({
-    enabled: !userSate,
+    enabled: !userState,
   });
 
-  const currentUserId = userSate ? Number(userSate.id) : user?.id;
+  const currentUserId = userState ? Number(userState.id) : user?.id;
 
-  // 2. Формируем основной рейтинг (исключая победителей)
   const rankedUsers = useMemo(() => {
-    return users.sort((a, b) =>
+    return [...users].sort((a, b) =>
       b.ticketsCount !== a.ticketsCount
         ? b.ticketsCount - a.ticketsCount
         : b.adsCount - a.adsCount
     );
   }, [users]);
 
+  const rankedGame = useMemo(() => {
+    return [...game].sort((a, b) => b.score - a.score);
+  }, [game]);
+
   const updatePageHandler = () => {
     refetch();
   };
 
-  const currentUserRank = rankedUsers.findIndex((u) => u.id === currentUserId);
-  const currentUserData = rankedUsers[currentUserRank];
-
   const getRankStyle = (index: number) => {
-    if (index === 0) return "bg-yellow-500/10 border-yellow-500/30";
-    if (index === 1) return "bg-gray-400/10 border-gray-400/30";
-    if (index === 2) return "bg-orange-500/10 border-orange-500/30";
-    return "bg-neutral-900 border-neutral-800";
+    if (index === 0)
+      return "bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-400/40";
+    if (index === 1)
+      return "bg-gradient-to-r from-gray-400/10 to-gray-500/10 border-gray-300/30";
+    if (index === 2)
+      return "bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-400/30";
+    return "bg-white/5 border-white/10";
   };
 
-  if (isLoading) {
+  if (isLoading || gameLoading) {
     return <PageLoader />;
   }
 
   return (
-    <div className={cn("min-h-screen bg-black flex justify-center items-center text-white p-4 pb-28")}>
-      <div className="max-w-md w-full min-h-screen">
-        {" "}
-        {/* Отступ снизу для плашки */}
+    <div className="min-h-screen flex justify-center text-white p-4 pb-28 relative overflow-hidden bg-black">
+
+      {/* BACKGROUND */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,197,94,0.15),transparent_40%),radial-gradient(circle_at_bottom,rgba(59,130,246,0.12),transparent_45%)]" />
+
+      <div className="relative max-w-md w-full">
+
         <PlatformBackButton>
-          <Button onClick={updatePageHandler} className="cursor-pointer">
+          <Button onClick={updatePageHandler} className="text-white">
             <RotateCcw />
           </Button>
         </PlatformBackButton>
-        {/* <BackButton className="sticky" /> */}
-        <div className="max-w-3xl mx-auto space-y-6 mt-10">
+
+        <div className="space-y-6 mt-6">
+
+          {/* HEADER */}
           <div className="flex items-center justify-center gap-3">
             <Trophy className="w-8 h-8 text-yellow-400" />
-            <h1 className="text-2xl font-bold">Рейтинг игроков</h1>
+            <h1 className="text-2xl font-bold tracking-wide bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+              {t("rating.title")}
+            </h1>
           </div>
 
-          {/* --- СЕКЦИЯ ПОБЕДИТЕЛЕЙ --- */}
-          {winners && winners.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-sm font-semibold text-purple-400 uppercase tracking-wider ml-1">
-                Наши победители
-              </h2>
+          {/* SWITCH */}
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={() => setMode("global")}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm transition-all",
+                mode === "global"
+                  ? "bg-white text-black"
+                  : "bg-white/10 text-white hover:bg-white/20"
+              )}
+            >
+              {t("rating.global")}
+            </button>
 
-              {winners.map((winner, index) => {
-                const medals = [
-                  "🥇",
-                  "🥈",
-                  "🥉",
-                  "④",
-                  "⑤",
-                  "⑥",
-                  "⑦",
-                  "⑧",
-                  "⑨",
-                  "⑩",
-                ];
+            <button
+              onClick={() => setMode("game")}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm transition-all",
+                mode === "game"
+                  ? "bg-white text-black"
+                  : "bg-white/10 text-white hover:bg-white/20"
+              )}
+            >
+              {t("rating.game")}
+            </button>
+          </div>
+
+          {/* WINNERS */}
+          {mode === "global" && winners && winners.length > 0 && (
+            <div className="space-y-3">
+              {winners.map((winner) => (
+                <Card
+                  key={winner.id}
+                  className="text-white border-white/10 bg-white/5 backdrop-blur-md"
+                >
+                  <CardContent className="flex justify-between p-4">
+                    <div>{winner.ticket.user.first_name}</div>
+                    <div>#{winner.ticket.id}</div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* LIST */}
+          <div className="space-y-2">
+            {(mode === "global" ? rankedUsers : rankedGame).map(
+              (item: any, index) => {
+                const id =
+                  mode === "global" ? item.id : item.user.id;
+
+                const isCurrentUser = id === currentUserId;
+
+                const name =
+                  mode === "global"
+                    ? item.first_name
+                    : item.user.username || "Player";
 
                 return (
                   <motion.div
-                    key={winner.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    whileHover={{ scale: 1.02 }} // Добавляем приятный микро-взаимодействие
-                    transition={{ delay: index * 0.1, duration: 0.3 }}
+                    key={id}
+                    whileHover={{ scale: 1.01 }}
+                    transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Card className="relative overflow-hidden border border-purple-500/30 bg-slate-900/50 backdrop-blur-md transition-colors hover:border-purple-400/50">
-                      {/* Световой акцент на фоне */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-transparent pointer-events-none" />
+                    <Card
+                      className={cn(
+                        "border text-white transition-all duration-300 backdrop-blur-md bg-white/5",
+                        "hover:bg-white/10 hover:shadow-lg",
+                        getRankStyle(index),
+                        isCurrentUser &&
+                          "ring-2 ring-emerald-400/70 border-emerald-400"
+                      )}
+                    >
+                      <CardContent className="flex justify-between p-4">
 
-                      <CardContent className="relative flex items-center  sm:p-4">
-                        <div className="flex items-center w-full justify-between gap-4">
-                          {/* LEFT: Medal & User Info */}
-                          <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-500/10 text-3xl shadow-inner shadow-purple-500/20">
-                              {medals[index] || "🏆"}
-                            </div>
-
-                            <div className="flex flex-col">
-                              <span className="text-white font-bold text-lg leading-tight tracking-wide">
-                                {winner.ticket.user.first_name}
-                              </span>
-                              <span className="text-xs font-medium uppercase tracking-wider text-purple-400">
-                                {index + 1} место
-                              </span>
-                            </div>
+                        {/* LEFT */}
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 text-center font-bold">
+                            {index === 0 ? (
+                              <Crown className="w-5 h-5 text-yellow-400" />
+                            ) : (
+                              `#${index + 1}`
+                            )}
                           </div>
 
-                          {/* RIGHT: Ticket ID */}
-                          <div className="flex flex-col items-end">
-                            <span className="text-xs text-purple-400/60 font-mono uppercase">
-                              Билет
-                            </span>
-                            <span className="text-xl font-black italic text-purple-200 tabular-nums">
-                              #{winner.ticket.id}
-                            </span>
+                          <div className="font-semibold">
+                            {name}
+                            {isCurrentUser && (
+                              <span className="text-emerald-400 ml-1">
+                                ({t("rating.you")})
+                              </span>
+                            )}
                           </div>
                         </div>
+
+                        {/* RIGHT */}
+                        <div className="flex gap-6 text-sm items-center">
+                          {mode === "global" ? (
+                            <>
+                              <div className="flex items-center gap-1">
+                                <Ticket className="w-4 h-4 text-green-400" />
+                                {item.ticketsCount}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Megaphone className="w-4 h-4 text-blue-400" />
+                                {item.adsCount}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-lg font-black">
+                              {item.score.toLocaleString()}
+                            </div>
+                          )}
+                        </div>
+
                       </CardContent>
                     </Card>
                   </motion.div>
                 );
-              })}
-            </div>
-          )}
-
-          {/* --- ОСНОВНОЙ РЕЙТИНГ --- */}
-          <div className="space-y-3">
-            <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider ml-1">
-              Текущая таблица
-            </h2>
-            {rankedUsers.map((item, index) => {
-              const isCurrentUser = item.id === currentUserId;
-
-              return (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                >
-                  <Card
-                    className={`border transition-all ${getRankStyle(index)} ${
-                      isCurrentUser
-                        ? "ring-2 ring-emerald-500 border-emerald-500 z-10"
-                        : ""
-                    }`}
-                  >
-                    <CardContent className="flex justify-between p-4">
-                      <div className="flex items-center text-white gap-3">
-                        <div className="w-8 text-center font-bold">
-                          {index === 0 ? (
-                            <Crown className="w-5 h-5 text-yellow-400" />
-                          ) : (
-                            `#${index + 1}`
-                          )}
-                        </div>
-                        <div className="font-semibold">
-                          {item.first_name}{" "}
-                          {isCurrentUser && (
-                            <span className="text-emerald-400 ml-1">(Вы)</span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex text-white gap-6 text-sm items-center">
-                        <div className="flex items-center gap-1">
-                          <Ticket className="w-4 h-4 text-green-400" />
-                          {item.ticketsCount}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Megaphone className="w-4 h-4 text-blue-400" />
-                          {item.adsCount}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+              }
+            )}
           </div>
+
         </div>
-        {/* --- ЗАКРЕПЛЕННЫЙ ПОЛЬЗОВАТЕЛЬ (STICKY BOTTOM) --- */}
-        {currentUserRank >= 0 && (
-          <div className={cn("fixed bottom-4 mx-auto  max-w-md w-full justify-center items-center left-0 right-0 z-50 px-4 pointer-events-none", platform === Platform.TDESKTOP && fullscreen && 'px-0')}>
-            <motion.div
-              initial={{ y: 100 }}
-              animate={{ y: 0 }}
-              className="max-w-3xl mx-auto pointer-events-auto"
-            >
-              <Card className="bg-emerald-600  w-full  border-emerald-400 text-white shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-                <CardContent className="flex justify-between w-full p-2 items-center">
-                  <div className="flex items-center gap-4">
-                    {/* Добавили + 1, так как индекс начинается с 0 */}
-                    <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1 font-bold text-lg">
-                      #{currentUserRank + 1}
-                    </div>
-                    <div>
-                      <div className="text-[10px] uppercase opacity-70 font-bold tracking-tight">
-                        Ваша позиция
-                      </div>
-                      <div className="font-bold leading-tight">
-                        {currentUserData?.first_name}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 border-l border-white/20 pl-4">
-                    <div className="text-center">
-                      <div className="text-[10px] opacity-70 flex justify-center">
-                        <Ticket className="w-3 h-3" />
-                      </div>
-                      <div className="font-bold">
-                        {currentUserData?.ticketsCount}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-[10px] opacity-70 flex justify-center">
-                        <Megaphone className="w-3 h-3" />
-                      </div>
-                      <div className="font-bold">
-                        {currentUserData?.adsCount}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        )}
       </div>
     </div>
   );

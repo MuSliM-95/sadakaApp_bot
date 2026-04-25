@@ -40,17 +40,18 @@ export class PointsService implements IPointsService {
       throw new HTTPError(400, "Too many moves");
     }
 
-    console.time("simulate");
-
     const result = gameEngine.simulateGame(session.seed, moves);
 
     if (result.score !== clientScore) {
-      console.log(result.score, clientScore);
       throw new HTTPError(400, "Score mismatch");
     }
 
-    const results = await this.pointsRepository.addPoints(userId, result.score);
+    const time = Date.now() - session.startedAt
+    
+    const results = await this.pointsRepository.addPoints(userId, result.score, time);
 
+    // console.log(results);
+    
     return results[0] ?? null;
   }
 

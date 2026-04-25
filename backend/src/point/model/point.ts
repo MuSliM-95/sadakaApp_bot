@@ -25,6 +25,9 @@ export class Points extends Model<
   @Column({ type: DataType.INTEGER, allowNull: false })
   declare score: CreationOptional<number>;
 
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  declare time: number;
+
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER, unique: true, allowNull: false })
   declare userId: number;

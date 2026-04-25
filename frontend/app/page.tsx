@@ -1,13 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Platform } from "@/shared/types/global.types";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
-import { gameAdaTimerTick, startCooldown, saveUser } from "@/store/ad.slice";
-// import { useAdsgram } from "@/features/ads/useAdsgram";
-// import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+import { saveUser } from "@/store/ad.slice";
 import { saveActiveGame, saveGame } from "@/store/game.slice";
 import { useTelegramWebApp } from "@/features/ads/useTelegramWebApp";
 import { useTelegramAuth } from "@/features/auth/hooks/useTelegramAuth";
@@ -19,12 +17,13 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/shared/components/ui/avatar";
-import { Tags, Gift } from "lucide-react";
+import { Tags } from "lucide-react";
 import Link from "next/link";
 import { ShowAdButton } from "@/features/ads/ShowAdButton";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
 import { Category, Game } from "@/features/iframe-games/types/types";
 import PageLoader from "@/shared/components/ui/PageLoader";
+import { ErrorMessage } from "@/shared/components/ui/ErrorMessage";
 
 const fetchGames = async (): Promise<Game[]> => {
   const res = await api.get<Game[]>("api/games");
@@ -39,11 +38,13 @@ export default function HomeGamesPage() {
   const tickets = useAppSelector((state) => state.ad.tickets);
   const fullscreen = useAppSelector((state) => state.ad.fullscreen);
   const platform = useAppSelector((state) => state.ad.platform);
-  // const secondsGameLeft = useAppSelector((state) => state.ad.secondsGameLeft);
-  // const cooldownGame = useAppSelector((state) => state.ad.cooldownGame);
   const activeGame = useAppSelector((state) => state.game.activeGame);
+  const userState = useAppSelector((state) => state.ad.user);
+  
 
-  const { data: user } = useUserQuery();
+  const { data: user } = useUserQuery({ enabled: !userState });
+
+  const currentUser = userState ?? user;
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [isLandscape, setIsLandscape] = useState(false);
@@ -51,7 +52,7 @@ export default function HomeGamesPage() {
   // SAVE USER
   useEffect(() => {
     if (user) dispatch(saveUser(user));
-  }, [user]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     // Проверяем, был ли уже запуск в этой сессии
@@ -75,23 +76,6 @@ export default function HomeGamesPage() {
     queryFn: fetchGames,
   });
 
-  // ADS
-  // const onReward = useCallback(() => {
-  //   const date = Date.now() + 240 * 1000;
-  //   dispatch(startCooldown({ timer: date, type: "game" }));
-  // }, [dispatch]);
-
-  // const { showAd, isPreparing, countdown } = useAdsgram({
-  //   blockId: process.env.NEXT_PUBLIC_BLOCK_ID_INIT!,
-  //   onReward,
-  //   onError: () => {},
-  // });
-
-  // useEffect(() => {
-  //   if (!cooldownGame) return;
-  //   const i = setInterval(() => dispatch(gameAdaTimerTick()), 1000);
-  //   return () => clearInterval(i);
-  // }, [cooldownGame]);
 
   // ORIENTATION
   useEffect(() => {
@@ -124,7 +108,7 @@ export default function HomeGamesPage() {
   const exitGame = () => dispatch(saveActiveGame({ url: null }));
 
   if (isLoading) return <PageLoader />;
-  if (error) return <div className="p-4 text-red-500">Ошибка</div>;
+  if (error) return <ErrorMessage />;
 
   // categories
   const categories =
@@ -154,23 +138,23 @@ export default function HomeGamesPage() {
             <Avatar className="w-10 h-10">
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>
-                {user?.username?.slice(0, 1) ?? "U"}
+                {currentUser?.username?.slice(0, 1) ?? "U"}
               </AvatarFallback>
             </Avatar>
 
             <div>
               <div className="text-xs text-neutral-400">
-                @{user?.username ?? "user"}
+                @{currentUser?.username ?? "user"}
               </div>
               <div className="text-sm font-semibold">
-                {user?.first_name ?? "Player"}
+                {currentUser?.first_name ?? "Player"}
               </div>
             </div>
           </Link>
 
           <div className="flex items-center gap-2">
             <Link
-              href={`/rating?id=${user?.id}`}
+              href={`/rating?id=${currentUser?.id}`}
               className="flex items-center justify-center w-6 h-6 rounded-full bg-yellow-500/20 hover:bg-yellow-400/30 text-yellow-400 transition"
               title="Рейтинг"
             >

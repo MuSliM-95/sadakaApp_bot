@@ -51,11 +51,11 @@ export const Leaderboard: React.FC<Props> = ({
             {/* HEADER */}
             <div className="p-6 flex justify-between items-center border-b border-slate-100">
               <div className="flex flex-col">
-                <h2 className="text-2xl font-black flex items-center gap-2 text-slate-800">
+                <h2 className="text-1xl font-black flex items-center gap-2 text-slate-800">
                   <Crown className="text-amber-500" />
                   {t("leaderboard.title")}
                 </h2>
-                <span className="text-[10px] uppercase tracking-widest text-slate-400 font-black mt-0.5">
+                <span className="text-[8px] uppercase tracking-widest text-slate-400 font-black mt-0.5">
                   {t("leaderboard.subtitle")}
                 </span>
               </div>

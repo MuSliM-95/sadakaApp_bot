@@ -18,9 +18,6 @@ export class PointsRepository implements IPointsRepository {
       "Points"
     ) as ModelStatic<Points>;
   }
-  public async create(score: number, userId: number): Promise<Points> {
-    return this._model.create({ score, userId });
-  }
 
   public async findAll(): Promise<Points[]> {
     return this._model.findAll({
@@ -28,16 +25,16 @@ export class PointsRepository implements IPointsRepository {
     });
   }
 
-  public async addPoints(userId: number, score: number): Promise<Points[]> {
+  public async addPoints(userId: number, score: number, time: number): Promise<Points[]> {
     const results = await this._model.sequelize!.query(
-      `INSERT INTO points ("userId", score, "createdAt", "updatedAt")
-    VALUES (:userId, :score, NOW(), NOW())
+      `INSERT INTO points ("userId", score, time, "createdAt", "updatedAt")
+    VALUES (:userId, :score, :time, NOW(), NOW())
     ON CONFLICT ("userId")
-    DO UPDATE SET score = EXCLUDED.score, "updatedAt" = NOW() WHERE
+    DO UPDATE SET score = EXCLUDED.score, time = EXCLUDED.time, "updatedAt" = NOW() WHERE
     points.score < EXCLUDED.score 
     RETURNING *`,
       {
-        replacements: { userId, score },
+        replacements: { userId, score, time },
         model: this._model,
         mapToModel: true,
         type: QueryTypes.SELECT,
@@ -49,9 +46,6 @@ export class PointsRepository implements IPointsRepository {
 
   public async findOne(userId: number): Promise<Points | null> {
     return this._model.findOne({ where: { userId } });
-  }
-  public async findByPk(pointsId: number): Promise<Points | null> {
-    return this._model.findByPk(pointsId);
   }
 
   public async saveGameSession(sessionId: string, sessionData: string): Promise<string> {    

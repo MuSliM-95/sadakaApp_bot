@@ -45,6 +45,7 @@ export const GameOver: React.FC<Props> = ({ className, gameOver, score, setGameO
 
             <button
               onClick={() => {
+                restartGame()
                 setGameOver(false);
                 setShowLeaderboard(true);
               }}

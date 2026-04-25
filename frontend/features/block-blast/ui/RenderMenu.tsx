@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { Crown, Gamepad2, Play, ArrowBigLeftDash } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { useGameSessionMutation } from "../hooks/useGameSessionMutation";
 import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
 import { cn } from "@/lib/utils";
 import { Platform } from "@/shared/types/global.types";
@@ -36,6 +35,23 @@ export const RenderMenu: React.FC<Props> = ({
 
   return (
     <div className="flex flex-col min-h-screen w-full max-w-md mx-auto select-none overflow-hidden bg-[#3252a8] items-center justify-center p-8">
+      <button
+        onClick={() => {
+          setOnboardingStep(0);
+          setShowOnboarding(true);
+        }}
+        className={cn(
+          "fixed  right-2 cursor-pointer text-white",
+          Platform.TDESKTOP !== platform ? "top-[92px]" : "top-2"
+        )}
+      >
+        {/* Gamepad2 icon - moved slightly right and made more prominent with thicker stroke as requested */}
+        <Gamepad2
+          size={32}
+          strokeWidth={3}
+          className="translate-y-[-1px] ml-2 shrink-0"
+        />
+      </button>
       <AdsInfoBanner isPreparing={isPreparing} countdown={countdown} />
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -79,24 +95,6 @@ export const RenderMenu: React.FC<Props> = ({
             {t("rating")}
           </button>
 
-          {/* How to Play Button: Triggers the onboarding tutorial */}
-          <button
-            onClick={() => {
-              setOnboardingStep(0);
-              setShowOnboarding(true);
-            }}
-            className={cn(
-              "fixed top-2 right-2 cursor-pointer text-white",
-              Platform.TDESKTOP !== platform && 'top-10'
-            )}
-          >
-            {/* Gamepad2 icon - moved slightly right and made more prominent with thicker stroke as requested */}
-            <Gamepad2
-              size={32}
-              strokeWidth={3}
-              className="translate-y-[-1px] ml-2 shrink-0"
-            />
-          </button>
           <Link
             href="/"
             className="w-full py-4 bg-slate-900 cursor-pointer text-white font-black rounded-[2rem] shadow-[0_8px_0_#334155] active:translate-y-1 active:shadow-[0_4px_0_#334155] transition-all text-xl uppercase tracking-widest flex items-center justify-center gap-3"

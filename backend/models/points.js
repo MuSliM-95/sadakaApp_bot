@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Points.init({
     score: DataTypes.INTEGER,
+    time: DataTypes.DATE,
     userId: DataTypes.INTEGER
   }, {
     sequelize,
