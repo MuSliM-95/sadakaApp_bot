@@ -34,12 +34,6 @@ export class PointsController
         middlewares: [new AuthGuard()],
         func: this.findPointsAll,
       },
-      // {
-      //   method: "patch",
-      //   path: "/points/update",
-      //   middlewares: [new AuthGuard()],
-      //   func: this.getPoints,
-      // },
       {
         method: "post",
         path: "/game/finish",

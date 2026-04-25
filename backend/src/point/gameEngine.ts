@@ -220,14 +220,14 @@ export class GameEngine {
       let blocks = 0;
   
       for (let r = 0; r < shape.matrix.length; r++) {
-        for (let c = 0; c < shape.matrix[r].length; c++) {
-          if (shape.matrix[r][c] === 1) {
+        for (let c = 0; c < shape.matrix[r]!.length; c++) {
+          if (shape.matrix[r]![c] === 1) {
             const gr = move.position.r + r;
             const gc = move.position.c + c;
   
             // ⚠️ игнорируем проверки (как клиент фактически)
             if (gr >= 0 && gr < GRID_SIZE && gc >= 0 && gc < GRID_SIZE) {
-              grid[gr][gc] = "x";
+              grid[gr]![gc] = "x";
               blocks++;
             }
           }
@@ -239,13 +239,13 @@ export class GameEngine {
       let colsToClear: number[] = [];
   
       for (let r = 0; r < GRID_SIZE; r++) {
-        if (grid[r].every((cell) => cell !== "")) rowsToClear.push(r);
+        if (grid[r]!.every((cell) => cell !== "")) rowsToClear.push(r);
       }
   
       for (let c = 0; c < GRID_SIZE; c++) {
         let full = true;
         for (let r = 0; r < GRID_SIZE; r++) {
-          if (grid[r][c] === "") {
+          if (grid[r]![c] === "") {
             full = false;
             break;
           }
@@ -257,11 +257,11 @@ export class GameEngine {
   
       // очистка
       rowsToClear.forEach((r) => {
-        for (let c = 0; c < GRID_SIZE; c++) grid[r][c] = "";
+        for (let c = 0; c < GRID_SIZE; c++) grid[r]![c] = "";
       });
   
       colsToClear.forEach((c) => {
-        for (let r = 0; r < GRID_SIZE; r++) grid[r][c] = "";
+        for (let r = 0; r < GRID_SIZE; r++) grid[r]![c] = "";
       });
   
       // --- SCORE (как на клиенте) ---
