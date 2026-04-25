@@ -307,7 +307,7 @@ export default function HomeGamesPage() {
             )}
           </div>
           <iframe
-            src={`${activeGame}?clid=${process.env.CLID}`}
+            src={`${activeGame}?clid=${process.env.NEXT_PUBLIC_CLID}`}
             className="flex-1 w-full"
             sandbox="allow-scripts allow-same-origin"
           />
