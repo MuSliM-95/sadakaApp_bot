@@ -17,18 +17,12 @@ export function useAdsgram({
   onError,
 }: useAdsgramParams) {
   const AdControllerRef = useRef<AdController | undefined>(undefined);
-  const dispatch = useAppDispatch();
+
   const { data: tickets } = useTicketsQuery();
   const { data: ads } = useAdsTicketQuery();
 
   const [isPreparing, setIsPreparing] = useState(false);
   const [countdown, setCountdown] = useState(3);
-
-  useEffect(() => {
-    if (ads != null && tickets != null) {
-      dispatch(adsTicketsUpdate({ ads: ads, tickets: tickets }));
-    }
-  }, [ads, tickets]);
 
   useEffect(() => {
     AdControllerRef.current = window.Adsgram?.init({
@@ -81,5 +75,7 @@ export function useAdsgram({
     showAd,
     isPreparing,
     countdown,
+    ads,
+    tickets
   };
 }

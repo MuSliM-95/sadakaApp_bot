@@ -2,25 +2,17 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Platform, PlatformType } from "@/shared/types/global.types";
-import { IProfile } from "@/features/user/types/user.types";
+// import { IProfile } from "@/features/user/types/user.types";
 
-interface IMyGame {
-  id: number;
-  name: string;
-  href: string | null;
-  url: string | null;
-}
+
 
 interface AdState {
   cooldown: number;
   cooldownGame: number;
   secondsLeft: number;
   secondsGameLeft: number;
-  tickets: number;
-  ads: number;
   fullscreen: boolean;
   platform: PlatformType;
-  user: IProfile | null;
 }
 
 const initialState: AdState = {
@@ -28,11 +20,8 @@ const initialState: AdState = {
   cooldownGame: 0,
   secondsLeft: 0,
   secondsGameLeft: 0,
-  tickets: 0,
-  ads: 0,
   fullscreen: true,
   platform: Platform.TDESKTOP,
-  user: null
 };
 
 const adSlice = createSlice({
@@ -83,26 +72,26 @@ const adSlice = createSlice({
       state.platform = action.payload;
     },
 
-    saveUser(state, action: PayloadAction<IProfile>) {
-      state.user = action.payload;
-    },
+    // saveUser(state, action: PayloadAction<IProfile>) {
+    //   state.user = action.payload;
+    // },
 
 
-    adsTicketsUpdate(
-      state,
-      action: PayloadAction<{ ads: number; tickets: number }>
-    ) {
-      state.tickets = action.payload.tickets;
-      state.ads = action.payload.ads;
-    },
+    // adsTicketsUpdate(
+    //   state,
+    //   action: PayloadAction<{ ads: number; tickets: number }>
+    // ) {
+    //   state.tickets = action.payload.tickets;
+    //   state.ads = action.payload.ads;
+    // },
   },
 });
 
 export const {
   startCooldown,
-  saveUser,
+  // saveUser,
   tick,
-  adsTicketsUpdate,
+  // adsTicketsUpdate,
   gameAdaTimerTick,
   updateScreen,
   savePlatform,

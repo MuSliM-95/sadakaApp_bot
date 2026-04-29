@@ -9,9 +9,9 @@ import {
 } from "@/shared/components/ui/avatar";
 import Link from "next/link";
 import { useEffect } from "react";
-import { Gamepad2, Eye, Tags, AlertCircle } from "lucide-react";
+import { Gamepad2, Eye, Tags, AlertCircle, OctagonX } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { saveActiveGame } from "@/store/game.slice";
+import { deleteGame, saveActiveGame } from "@/store/game.slice";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
 import { AddGameForm } from "./AddGameForm";
 import { UserRole } from "../types/user.types";
@@ -41,6 +41,9 @@ export function Profile() {
     webApp.expand();
   }, []);
 
+  const deleteMyGame = (id: number) => {
+    dispatch(deleteGame({ id }));
+  };
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white px-4 pb-8">
@@ -113,14 +116,25 @@ export function Profile() {
           <div className="space-y-3">
             {playedGames?.map((game, index) => {
               return (
-                <Link
+                <div
                   key={index}
-                  href={game.href}
-                  onClick={() => startGame(game.url)}
-                  className="block bg-neutral-900 border border-white/5 rounded-2xl p-4 hover:bg-neutral-800 transition-colors"
+                  className="flex items-center justify-between bg-neutral-900 border border-white/5 rounded-2xl p-4 hover:bg-neutral-800 transition-colors"
                 >
-                  {game.name}
-                </Link>
+                  <Link
+                    href={game.href}
+                    onClick={() => {
+                      startGame(game.url), console.log(game.url);
+                    }}
+                  >
+                    {game.name}
+                  </Link>
+                  <button
+                    className="cursor-pointer"
+                    onClick={() => deleteMyGame(game.id)}
+                  >
+                    <OctagonX />
+                  </button>
+                </div>
               );
             })}
           </div>

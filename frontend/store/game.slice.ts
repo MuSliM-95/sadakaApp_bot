@@ -10,12 +10,12 @@ interface IMyGame {
 }
 
 interface gameState {
-  playedGames: IMyGame[] | null;
+  playedGames: IMyGame[];
   activeGame: string | null;
 }
 
 const initialState: gameState = {
-  playedGames: null,
+  playedGames: [],
   activeGame: null,
 };
 
@@ -24,24 +24,24 @@ const gameSlice = createSlice({
   initialState,
   reducers: {
     saveGame(state, action: PayloadAction<IMyGame>) {
-      if (!state.playedGames) {
-        state.playedGames = [];
-      }
-
-      const exists = state.playedGames.some(
+      const exists = state.playedGames.find(
         (game) => game.id === action.payload.id
       );
 
       if (!exists) {
-        state.playedGames?.push(action.payload);
+        state.playedGames.push(action.payload);
       }
     },
     saveActiveGame(state, action: PayloadAction<{ url: string | null }>) {
-		state.activeGame = action.payload.url
-	},
+      state.activeGame = action.payload.url;
+    },
+
+    deleteGame(state, action: PayloadAction<{ id: number }>) {
+      state.playedGames = state.playedGames?.filter((el) => el.id !== action.payload.id)
+    }
   },
 });
 
-export const { saveGame, saveActiveGame } = gameSlice.actions;
+export const { saveGame, saveActiveGame, deleteGame } = gameSlice.actions;
 
 export default gameSlice.reducer;

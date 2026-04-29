@@ -20,9 +20,8 @@ import { usePointsMutation } from "../hooks/usePointsMutation";
 import { SHAPES } from "../utils/gameEngine";
 import { useGameSessionMutation } from "../hooks/useGameSessionMutation";
 import { useAdsgram } from "@/features/ads/useAdsgram";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { gameAdaTimerTick, startCooldown } from "@/store/ad.slice";
-import { AdsInfoBanner } from "@/shared/components/ui/ads.info.banner";
+import { useAppDispatch } from "@/store/hooks";
+import { startCooldown } from "@/store/ad.slice";
 import { usePointsQuery } from "../hooks/usePointsQuery";
 import { useUserQuery } from "@/features/user/hooks/useUserQuery";
 
@@ -184,10 +183,10 @@ const getRandomShapes = (
 export default function BlockBlast() {
   const rngRef = useRef<() => number>(() => Math.random());
   const movesRef = useRef<Move[]>([]);
-  const user = useAppSelector((state) => state.ad.user);
 
-  const { data: profile } = useUserQuery({ enabled: !user });
-  const userId = user?.id ?? profile?.id;
+
+  const { data: profile } = useUserQuery();
+  const userId = profile?.id;
 
   const { data: pointsData } = usePointsQuery(userId);
 

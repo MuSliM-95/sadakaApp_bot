@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { Platform } from "@/shared/types/global.types";
 import { FullscreenButton } from "@/shared/components/ui/fullscreenButton";
-import { saveUser } from "@/store/ad.slice";
 import { saveActiveGame, saveGame } from "@/store/game.slice";
 import { useTelegramWebApp } from "@/features/ads/useTelegramWebApp";
 import { useTelegramAuth } from "@/features/auth/hooks/useTelegramAuth";
@@ -24,6 +23,7 @@ import { PlatformBackButton } from "@/shared/components/ui/platform.back.button"
 import { Category, Game } from "@/features/iframe-games/types/types";
 import PageLoader from "@/shared/components/ui/PageLoader";
 import { ErrorMessage } from "@/shared/components/ui/ErrorMessage";
+import { useTicketsQuery } from "@/features/tickets/hooks/useTicketsQuery";
 
 const fetchGames = async (): Promise<Game[]> => {
   const res = await api.get<Game[]>("api/games");
@@ -35,24 +35,15 @@ export default function HomeGamesPage() {
 
   const dispatch = useAppDispatch();
 
-  const tickets = useAppSelector((state) => state.ad.tickets);
   const fullscreen = useAppSelector((state) => state.ad.fullscreen);
   const platform = useAppSelector((state) => state.ad.platform);
   const activeGame = useAppSelector((state) => state.game.activeGame);
-  const userState = useAppSelector((state) => state.ad.user);
-  
 
-  const { data: user } = useUserQuery({ enabled: !userState });
-
-  const currentUser = userState ?? user;
+  const { data: currentUser } = useUserQuery();
+  const { data: tickets } = useTicketsQuery();
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [isLandscape, setIsLandscape] = useState(false);
-
-  // SAVE USER
-  useEffect(() => {
-    if (user) dispatch(saveUser(user));
-  }, [user, dispatch]);
 
   useEffect(() => {
     // Проверяем, был ли уже запуск в этой сессии
@@ -76,7 +67,6 @@ export default function HomeGamesPage() {
     queryFn: fetchGames,
   });
 
-
   // ORIENTATION
   useEffect(() => {
     const media = window.matchMedia("(orientation: landscape)");
@@ -93,13 +83,10 @@ export default function HomeGamesPage() {
 
   const { isFullscreen } = useTelegramWebApp(fullscreen);
 
-
-  const showBanner =
-    (platform === Platform.TDESKTOP && !fullscreen) ||
-    (platform !== Platform.TDESKTOP && !isLandscape);
-
   const startGame = (url: string, title: string, id: number) => {
     // if (secondsGameLeft <= 0) showAd();
+
+    console.log(activeGame);
 
     dispatch(saveGame({ id, name: title, href: "/", url }));
     dispatch(saveActiveGame({ url }));
@@ -122,7 +109,6 @@ export default function HomeGamesPage() {
   const filteredGames = activeCategory
     ? games?.filter((g) => g.categories.some((c) => c.slug === activeCategory))
     : games;
-    
 
   return (
     <div className="min-h-screen bg-black text-white pb-12 px-3 pt-4">
@@ -309,7 +295,10 @@ export default function HomeGamesPage() {
           <iframe
             src={`${activeGame}?clid=${process.env.NEXT_PUBLIC_CLID}`}
             className="flex-1 w-full"
-            sandbox="allow-scripts allow-same-origin"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+            allow="fullscreen; clipboard-write"
+            referrerPolicy="no-referrer-when-downgrade"
+            loading="lazy"
           />
         </div>
       )}

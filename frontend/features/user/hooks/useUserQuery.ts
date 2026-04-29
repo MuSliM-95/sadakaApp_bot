@@ -5,6 +5,6 @@ export function useUserQuery(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["profile"],
     queryFn: () => userService.getProfile(),
-    enabled: options?.enabled,
+    enabled: options?.enabled ,
   });
 }

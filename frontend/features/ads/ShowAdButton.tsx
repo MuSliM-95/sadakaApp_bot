@@ -32,7 +32,6 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
 
   const cooldown = useAppSelector((state) => state.ad.cooldown);
   const secondsLeft = useAppSelector((state) => state.ad.secondsLeft);
-  const ads = useAppSelector((state) => state.ad.ads);
   const dispatch = useAppDispatch();
 
   const onReward = useCallback(() => {
@@ -47,7 +46,7 @@ export function ShowAdButton({ className, children }: IProps): ReactElement {
     // setAds(false);
   }, []);
 
-  const { showAd, isPreparing, countdown } = useAdsgram({
+  const { showAd, isPreparing, countdown, ads } = useAdsgram({
     blockId: process.env.NEXT_PUBLIC_BLOCK_ID!,
     onReward,
     onError,

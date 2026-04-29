@@ -13,7 +13,6 @@ import { Card, CardContent } from "@/shared/components/ui/card";
 import { useUsersQuery } from "../hooks/useUsersQuery";
 import { useUserQuery } from "../hooks/useUserQuery";
 import { Button } from "@/shared/components/ui/button";
-import { useAppSelector } from "@/store/hooks";
 import { cn } from "@/lib/utils";
 import PageLoader from "@/shared/components/ui/PageLoader";
 import { useWinnersQuery } from "../hooks/useWinnersQuery";
@@ -26,17 +25,13 @@ export function Rating() {
 
   const [mode, setMode] = useState<"global" | "game">("global");
 
-  const userState = useAppSelector((state) => state.ad.user);
-
   const { data: users = [], isLoading, refetch } = useUsersQuery();
   const { data: game = [], isLoading: gameLoading } = usePointsAllQuery();
   const { data: winners } = useWinnersQuery();
 
-  const { data: user } = useUserQuery({
-    enabled: !userState,
-  });
+  const { data: user } = useUserQuery();
 
-  const currentUserId = userState ? Number(userState.id) : user?.id;
+  const currentUserId = user?.id;
 
   const rankedUsers = useMemo(() => {
     return [...users].sort((a, b) =>

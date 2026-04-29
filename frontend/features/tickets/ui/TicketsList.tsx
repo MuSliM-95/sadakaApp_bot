@@ -5,9 +5,8 @@ import { UserRole } from "@/features/user/types/user.types";
 import { cn } from "@/lib/utils";
 import PageLoader from "@/shared/components/ui/PageLoader";
 import { Button } from "@/shared/components/ui/button";
-import { useAppSelector } from "@/store/hooks";
 import { RotateCcw, Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTicketQuery } from "../hooks/useTicketQuery";
 import { useUserQuery } from "@/features/user/hooks/useUserQuery";
 import { TicketModal } from "./TicketModal";
@@ -15,11 +14,8 @@ import { Input } from "@/shared/components/ui/input";
 import { PlatformBackButton } from "@/shared/components/ui/platform.back.button";
 
 export function TicketsList() {
-  const userState = useAppSelector((state) => state.ad.user);
   const { data, isLoading, refetch } = useUserTicketsQuery();
-  const { data: profile, refetch: getProfile } = useUserQuery({
-    enabled: true,
-  });
+  const { data: user } = useUserQuery();
 
   const [selectedTicket, setSelectedTicket] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,13 +25,7 @@ export function TicketsList() {
     enabled: !!selectedTicket,
   });
 
-  useEffect(() => {
-    if (!userState) {
-      getProfile();
-    }
-  }, []);
 
-  const user = userState || profile;
   const isAdmin = user?.role === UserRole.admin;
 
   const updateTicketsPage = () => {
@@ -47,7 +37,7 @@ export function TicketsList() {
   );
 
 
-  if (isLoading) return <PageLoader />;
+  if (ticketLoading) return <PageLoader />;
 
   if (!data?.length) {
     return (
