@@ -72,18 +72,6 @@ const adSlice = createSlice({
       state.platform = action.payload;
     },
 
-    // saveUser(state, action: PayloadAction<IProfile>) {
-    //   state.user = action.payload;
-    // },
-
-
-    // adsTicketsUpdate(
-    //   state,
-    //   action: PayloadAction<{ ads: number; tickets: number }>
-    // ) {
-    //   state.tickets = action.payload.tickets;
-    //   state.ads = action.payload.ads;
-    // },
   },
 });
 

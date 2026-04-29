@@ -35,5 +35,11 @@
     "back": "Back",
     "next": "Next",
     "done": "Got it!"
+  },
+  "gameOver": {
+    "title": "Game Over",
+    "score": "You scored {{score}} points!",
+    "tryAgain": "Try Again",
+    "leaderboard": "Leaderboard"
   }
 }

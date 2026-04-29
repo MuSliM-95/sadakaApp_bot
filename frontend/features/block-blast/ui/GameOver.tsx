@@ -1,18 +1,28 @@
-"use client"
+"use client";
 import React from "react";
 import { motion } from "motion/react";
 import { Play, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   className?: string;
   gameOver: boolean;
-  score: number 
-  setGameOver: React.Dispatch<React.SetStateAction<boolean>>
-  setShowLeaderboard: React.Dispatch<React.SetStateAction<boolean>>
-  restartGame: () => void
+  score: number;
+  setGameOver: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowLeaderboard: React.Dispatch<React.SetStateAction<boolean>>;
+  restartGame: () => void;
 }
 
-export const GameOver: React.FC<Props> = ({ className, gameOver, score, setGameOver, setShowLeaderboard, restartGame }) => {
+export const GameOver: React.FC<Props> = ({
+  className,
+  gameOver,
+  score,
+  setGameOver,
+  setShowLeaderboard,
+  restartGame,
+}) => {
+  const { t } = useTranslation("block_blast");
+
   return (
     <>
       {gameOver && (
@@ -30,9 +40,11 @@ export const GameOver: React.FC<Props> = ({ className, gameOver, score, setGameO
             <div className="w-20 h-20 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mb-6">
               <X size={40} strokeWidth={3} />
             </div>
-            <h2 className="text-3xl font-black mb-2">GAME OVER</h2>
+
+            <h2 className="text-3xl font-black mb-2">{t("gameOver.title")}</h2>
+
             <p className="text-gray-500 mb-8 font-medium">
-              You scored {score} points!
+              {t("gameOver.score", { score })}
             </p>
 
             <button
@@ -40,18 +52,18 @@ export const GameOver: React.FC<Props> = ({ className, gameOver, score, setGameO
               className="w-full bg-blue-500 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-blue-600 active:scale-95 transition-all shadow-lg shadow-blue-500/30"
             >
               <Play size={20} fill="currentColor" />
-              TRY AGAIN
+              {t("gameOver.tryAgain")}
             </button>
 
             <button
               onClick={() => {
-                restartGame()
+                restartGame();
                 setGameOver(false);
                 setShowLeaderboard(true);
               }}
               className="w-full mt-3 bg-gray-100 text-gray-600 font-bold py-4 rounded-2xl hover:bg-gray-200 active:scale-95 transition-all"
             >
-              LEADERBOARD
+              {t("gameOver.leaderboard")}
             </button>
           </motion.div>
         </motion.div>
