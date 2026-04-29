@@ -89,9 +89,7 @@ const adSlice = createSlice({
 
 export const {
   startCooldown,
-  // saveUser,
   tick,
-  // adsTicketsUpdate,
   gameAdaTimerTick,
   updateScreen,
   savePlatform,

@@ -2,8 +2,6 @@ import { AdController, ShowPromiseResult } from "@/adsgram";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTicketsQuery } from "../tickets/hooks/useTicketsQuery";
 import { useAdsTicketQuery } from "./hooks/useAdsTicketQuery";
-import { useAppDispatch } from "@/store/hooks";
-import { adsTicketsUpdate } from "@/store/ad.slice";
 
 export interface useAdsgramParams {
   blockId: string;
