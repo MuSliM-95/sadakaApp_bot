@@ -84,10 +84,6 @@ export default function HomeGamesPage() {
   const { isFullscreen } = useTelegramWebApp(fullscreen);
 
   const startGame = (url: string, title: string, id: number) => {
-    // if (secondsGameLeft <= 0) showAd();
-
-    console.log(activeGame);
-
     dispatch(saveGame({ id, name: title, href: "/", url }));
     dispatch(saveActiveGame({ url }));
   };
@@ -294,11 +290,8 @@ export default function HomeGamesPage() {
           </div>
           <iframe
             src={`${activeGame}?clid=${process.env.NEXT_PUBLIC_CLID}`}
-            className="flex-1 w-full"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-            allow="fullscreen; clipboard-write"
-            referrerPolicy="no-referrer-when-downgrade"
-            loading="lazy"
+            className="flex-1 w-full border-none"
+            allow="fullscreen; accelerometer; camera; clipboard-read; clipboard-write; screen-wake-lock; speaker-selection; web-share; geolocation; gyroscope; microphone; xr-spatial-tracking; autoplay; encrypted-media; picture-in-picture; payment; publickey-credentials-get; publickey-credentials-create; storage-access; attribution-reporting; browsing-topics"
           />
         </div>
       )}
