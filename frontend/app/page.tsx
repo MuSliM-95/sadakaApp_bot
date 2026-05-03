@@ -293,7 +293,7 @@ export default function HomeGamesPage() {
             className="flex-1 w-full border-none"
             sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
             // sandbox="allow-same-origin allow-scripts"
-            allow="fullscreen; accelerometer; camera; clipboard-read; clipboard-write; screen-wake-lock; speaker-selection; web-share; geolocation; gyroscope; microphone; xr-spatial-tracking; autoplay; encrypted-media; picture-in-picture; payment; publickey-credentials-get; publickey-credentials-create; storage-access; attribution-reporting; browsing-topics"
+            allow="fullscreen; cross-origin-isolated; accelerometer; camera; clipboard-read; clipboard-write; screen-wake-lock; speaker-selection; web-share; geolocation; gyroscope; microphone; xr-spatial-tracking; autoplay; encrypted-media; picture-in-picture; payment; publickey-credentials-get; publickey-credentials-create; storage-access; attribution-reporting; browsing-topics"
           />
         </div>
       )}
